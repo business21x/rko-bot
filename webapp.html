@@ -1,0 +1,618 @@
+import asyncio
+import logging
+import requests
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import Command
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.storage.memory import MemoryStorage
+from datetime import datetime
+
+# ----------------- НАСТРОЙКИ -----------------
+BOT_TOKEN = "8969014434:AAGlpPk7WK3DYzF-2nYKY1gYgLpGttEaKKw"
+DADATA_API_KEY = "88b2ea44839acf5933d1d286b4540d8e218c5f58"
+GOOGLE_SHEET_NAME = "Лиды_счета"
+MANAGER_CHAT_ID = "756753408"
+# ---------------------------------------------
+
+BANKS_LIST = [
+    "Альфа-Банк", "Т-Банк", "ВТБ", "Сбербанк", "Точка", "Озон Банк",
+    "ДелоБанк", "УБРиР", "Банк Санкт-Петербург", "Совкомбанк",
+    "Свой Банк", "Уралсиб", "ОТП Банк", "ПСБ", "Ак Барс",
+    "Живаго Банк", "Агророс Банк", "Руснар Банк (ИП)", "Руснар Банк (ООО)",
+    "Примсоцбанк", "Контур Банк", "Банк Левобережный", "Райффайзенбанк",
+    "ЭнергоТрансБанк", "Банк Национальный стандарт", "Реалист Банк",
+    "Хайс Банк", "Локо Банк", "Бланк Банк", "БКС Банк", "Кубань Кредит"
+]
+
+BANK_LINKS = {
+    "Альфа-Банк": "https://rko-group.ru/s/ajrCVQ3Y",
+    "Т-Банк": "https://www.tbank.ru/business/rko/form?utm_medium=ptr.act&utm_campaign=sme.partners&partnerId=5-3HUOSFNGB&agentId=6-100MO91CO&agentSsoId=b01f5637-93b6-46c2-972a-5332ba31c2fc&utm_source=partner_rko_a_sme",
+    "ВТБ": "MANAGER",
+    "Сбербанк": "https://www.sberbank.com/ru/s_m_business/referral/join?utm_source=0NRBKJSEN0GFH",
+    "Точка": "https://banks-market.com/offer/505/1229",
+    "Озон Банк": "https://rko-group.ru/s/rHrZbN",
+    "ДелоБанк": "https://banks-market.com/offer/17/1229",
+    "УБРиР": "https://banks-market.com/offer/369/1229",
+    "Банк Санкт-Петербург": "https://rko-group.ru/s/eVyOesZa",
+    "Совкомбанк": "https://banks-market.com/offer/460/1229",
+    "Свой Банк": "https://rko-group.ru/s/je9blLqE",
+    "Уралсиб": "https://rko-group.ru/s/8PFTk6Nq",
+    "ОТП Банк": "https://rko-group.ru/s/QxwIhG7s",
+    "ПСБ": "https://banks-market.com/offer/493/1229",
+    "Ак Барс": "https://banks-market.com/offer/19/1229",
+    "Живаго Банк": "https://banks-market.com/offer/140/1229",
+    "Агророс Банк": "https://rko-group.ru/s/rSbxKfe1",
+    "Руснар Банк (ИП)": "https://banks-market.com/offer/349/1229",
+    "Руснар Банк (ООО)": "https://banks-market.com/offer/24/1229",
+    "Примсоцбанк": "https://rko-group.ru/s/qLZeYvjM",
+    "Контур Банк": "https://banks-market.com/offer/330/1229",
+    "Банк Левобережный": "https://rko-group.ru/s/2Q6nJNnH",
+    "Райффайзенбанк": "https://banks-market.com/offer/536/1229",
+    "ЭнергоТрансБанк": "https://banks-market.com/offer/239/1229",
+    "Банк Национальный стандарт": "https://banks-market.com/offer/157/1229",
+    "Реалист Банк": "https://rko-group.ru/s/QaY3x1HA",
+    "Хайс Банк": "https://banks-market.com/offer/238/1229",
+    "Локо Банк": "https://rko-group.ru/s/CYGxfixU",
+    "Бланк Банк": "https://banks-market.com/offer/52/1229",
+    "БКС Банк": "MANAGER",
+    "Кубань Кредит": "MANAGER"
+}
+
+logging.basicConfig(level=logging.INFO)
+bot = Bot(token=BOT_TOKEN)
+storage = MemoryStorage()
+dp = Dispatcher(storage=storage)
+
+# ---------- СОСТОЯНИЯ FSM ----------
+class Form(StatesGroup):
+    inn = State()
+    fio = State()
+    phone = State()
+    email = State()
+    company = State()
+    city = State()
+    waiting_for_manager_question = State()
+
+# ---------- GOOGLE SHEETS ----------
+def get_google_sheet():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name("google_credentials.json", scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(GOOGLE_SHEET_NAME).sheet1
+    if not sheet.get_all_values():
+        sheet.append_row([
+            "Дата", "Время", "ФИО", "ИНН", "Телефон", "Email",
+            "Компания", "Город", "Статус ФНС", "Выбранный банк",
+            "Партнерская ссылка", "Тип заявки", "Обработан"
+        ])
+    return sheet
+
+# ---------- КЛАВИАТУРЫ ----------
+def get_main_keyboard():
+    kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="🚀 Хочу зарегистрировать бизнес")],
+            [KeyboardButton(text="📞 Связь с менеджером")],
+            [KeyboardButton(text="↩ В начало")]
+        ],
+        resize_keyboard=True
+    )
+    return kb
+
+def get_start_keyboard():
+    kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="💻 Заполнить анкету", web_app=WebAppInfo(url="https://YOUR_USERNAME.github.io/rko-bot/webapp.html"))],
+            [KeyboardButton(text="💬 Пройти опрос в боте")],
+            [KeyboardButton(text="🚀 Я на стадии регистрации бизнеса")],
+            [KeyboardButton(text="🚀 Хочу зарегистрировать бизнес")],
+            [KeyboardButton(text="📞 Связь с менеджером")]
+        ],
+        resize_keyboard=True
+    )
+    return kb
+
+def get_back_keyboard():
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="↩ Назад", callback_data="back_to_start")]
+    ])
+    return kb
+
+def get_banks_inline_keyboard():
+    buttons = []
+    for i in range(0, len(BANKS_LIST), 2):
+        row = []
+        row.append(InlineKeyboardButton(text=BANKS_LIST[i], callback_data=f"bank_{BANKS_LIST[i]}"))
+        if i + 1 < len(BANKS_LIST):
+            row.append(InlineKeyboardButton(text=BANKS_LIST[i+1], callback_data=f"bank_{BANKS_LIST[i+1]}"))
+        buttons.append(row)
+    buttons.append([InlineKeyboardButton(text="🚀 Хочу зарегистрировать бизнес", callback_data="register_business")])
+    buttons.append([InlineKeyboardButton(text="📞 Связаться с менеджером", callback_data="contact_manager")])
+    buttons.append([InlineKeyboardButton(text="↩ Назад", callback_data="back_to_start")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+def get_inn_not_found_keyboard():
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔄 Попробовать другой ИНН", callback_data="retry_inn")],
+        [InlineKeyboardButton(text="✍️ Ввести данные вручную", callback_data="manual_input")],
+        [InlineKeyboardButton(text="🚀 Я на стадии регистрации бизнеса", callback_data="future_registration")],
+        [InlineKeyboardButton(text="🚀 Хочу зарегистрировать бизнес", callback_data="register_business")],
+        [InlineKeyboardButton(text="↩ Назад", callback_data="back_to_start")]
+    ])
+    return kb
+
+# ---------- ПРОВЕРКА ИНН ----------
+def check_inn(inn: str):
+    url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party"
+    headers = {
+        "Authorization": f"Token {DADATA_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    try:
+        response = requests.post(url, json={"query": inn}, headers=headers, timeout=10)
+        data = response.json()
+        if data.get("suggestions"):
+            return data["suggestions"][0]["data"]
+        return None
+    except Exception as e:
+        logging.error(f"Ошибка DaData: {e}")
+        return None
+
+# ---------- ФУНКЦИЯ "ХОЧУ ЗАРЕГИСТРИРОВАТЬ БИЗНЕС" ----------
+async def handle_register_business(source, state: FSMContext):
+    user_data = await state.get_data()
+    
+    try:
+        sheet = get_google_sheet()
+        now = datetime.now()
+        sheet.append_row([
+            now.strftime("%d.%m.%Y"),
+            now.strftime("%H:%M:%S"),
+            user_data.get('fio', 'Не указано'),
+            user_data.get('inn', 'Не указано'),
+            user_data.get('phone', 'Не указано'),
+            user_data.get('email', 'Не указано'),
+            user_data.get('company', 'Не указано'),
+            user_data.get('city', 'Не указано'),
+            "Заявка на регистрацию бизнеса",
+            "—",
+            "—",
+            "Регистрация бизнеса",
+            "Нет"
+        ])
+        logging.info("Заявка на регистрацию бизнеса записана")
+    except Exception as e:
+        logging.error(f"Ошибка Google Sheets: {e}")
+    
+    message_text = (
+        "🚀 <b>Регистрация бизнеса</b>\n\n"
+        "Свяжитесь со мной лично — я помогу вам зарегистрировать ИП или ООО "
+        "и подобрать лучший банк для старта.\n\n"
+        '<a href="https://t.me/Kirilloff_Igor">Написать в Telegram</a>\n\n'
+        "<i>Нажмите на ссылку выше, чтобы открыть чат.</i>"
+    )
+    
+    if isinstance(source, types.Message):
+        await source.answer(message_text, parse_mode="HTML", disable_web_page_preview=True)
+    elif isinstance(source, types.CallbackQuery):
+        await source.message.edit_text(message_text, parse_mode="HTML", disable_web_page_preview=True)
+        await source.answer()
+    
+    await state.clear()
+
+# ---------- ФУНКЦИЯ "СВЯЗЬ С МЕНЕДЖЕРОМ" ----------
+async def handle_contact_manager(source, state: FSMContext):
+    message_text = (
+        "📞 <b>Связь с менеджером</b>\n\n"
+        "Напишите мне в личные сообщения, и я помогу вам с любым вопросом.\n\n"
+        '<a href="https://t.me/Kirilloff_Igor">Написать в Telegram</a>\n\n'
+        "<i>Нажмите на ссылку выше, чтобы открыть чат.</i>"
+    )
+    
+    if isinstance(source, types.Message):
+        await source.answer(message_text, parse_mode="HTML", disable_web_page_preview=True)
+    elif isinstance(source, types.CallbackQuery):
+        await source.message.edit_text(message_text, parse_mode="HTML", disable_web_page_preview=True)
+        await source.answer()
+    
+    await state.clear()
+
+# ---------- СТАРТ ----------
+@dp.message(Command("start"))
+async def start_cmd(message: types.Message, state: FSMContext):
+    await state.clear()
+    await message.answer(
+        "👋 Добро пожаловать в сервис подбора расчетного счета!\n\n"
+        "Я помогу вам открыть счет в любом из 30 банков-партнеров.\n\n"
+        "<b>Выберите удобный способ:</b>",
+        parse_mode="HTML",
+        reply_markup=get_start_keyboard()
+    )
+    await state.set_state(Form.inn)
+
+# ---------- КНОПКА "↩ В НАЧАЛО" ----------
+@dp.message(F.text == "↩ В начало")
+async def back_to_start(message: types.Message, state: FSMContext):
+    await state.clear()
+    await start_cmd(message, state)
+
+@dp.callback_query(F.data == "back_to_start")
+async def back_to_start_inline(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    await callback.message.delete()
+    await start_cmd(callback.message, state)
+    await callback.answer()
+
+# ---------- ОБРАБОТКА КНОПОК НА СТАРТЕ ----------
+@dp.message(Form.inn, F.text == "💬 Пройти опрос в боте")
+async def start_bot_survey(message: types.Message, state: FSMContext):
+    await message.answer(
+        "Введите ваш <b>ИНН</b> (10 или 12 цифр):\n"
+        "<i>Если у вас пока нет ИНН компании — просто введите ИНН физлица или нажмите одну из кнопок ниже.</i>",
+        parse_mode="HTML",
+        reply_markup=get_main_keyboard()
+    )
+    await state.set_state(Form.inn)
+
+@dp.message(Form.inn, F.text == "🚀 Я на стадии регистрации бизнеса")
+async def future_registration_start(message: types.Message, state: FSMContext):
+    await state.update_data(fns_status="На стадии регистрации")
+    await message.answer(
+        "👍 Отлично! Счет можно открыть сразу после регистрации ИП или ООО.\n\n"
+        "Для подбора лучшего банка нам нужны ваши данные.\n"
+        "Введите ваш <b>ИНН</b> (10 или 12 цифр):\n"
+        "<i>Если у вас пока нет ИНН — введите ИНН физического лица.</i>",
+        parse_mode="HTML",
+        reply_markup=get_main_keyboard()
+    )
+    await state.set_state(Form.inn)
+
+@dp.message(Form.inn, F.text == "🚀 Хочу зарегистрировать бизнес")
+async def register_business_start(message: types.Message, state: FSMContext):
+    await handle_register_business(message, state)
+
+@dp.message(Form.inn, F.text == "📞 Связь с менеджером")
+async def contact_manager_start(message: types.Message, state: FSMContext):
+    await handle_contact_manager(message, state)
+
+# ---------- ОБРАБОТКА ИНН ----------
+@dp.message(Form.inn, F.text.regexp(r'^\d{10}$|^\d{12}$'))
+async def process_inn(message: types.Message, state: FSMContext):
+    await state.update_data(inn=message.text)
+    msg = await message.answer("🔍 Проверяю данные в ФНС...")
+    data = check_inn(message.text)
+
+    if data:
+        company_name = data.get("name", {}).get("full") or data.get("name", {}).get("short") or ""
+        status = data.get("type", "Не определен")
+
+        fio = ""
+        if status == "INDIVIDUAL_ENTREPRENEUR":
+            fio = data.get("name", {}).get("full") or ""
+            status_text = "ИП"
+        elif status == "LEGAL":
+            head = data.get("management", {}).get("name") or data.get("fio", {}).get("name") or ""
+            fio = head
+            status_text = "Юрлицо / ООО"
+        elif status == "SELF_EMPLOYED":
+            fio = data.get("name", {}).get("full") or ""
+            status_text = "Самозанятый"
+        else:
+            status_text = status
+            fio = ""
+
+        await state.update_data(
+            company=company_name if company_name else "",
+            fns_status=status_text
+        )
+
+        if fio:
+            await state.update_data(fio=fio)
+            await msg.edit_text(
+                f"✅ <b>Данные из ФНС:</b>\n"
+                f"👤 ФИО: {fio}\n"
+                f"📋 Компания: {company_name or '—'}\n"
+                f"📌 Статус: {status_text}\n\n"
+                f"Данные заполнены автоматически. Если нужно исправить — введите вручную на следующем шаге.\n"
+                f"Введите ваш <b>номер телефона</b>:",
+                parse_mode="HTML"
+            )
+            await state.set_state(Form.phone)
+        else:
+            await msg.edit_text(
+                f"✅ <b>Данные из ФНС:</b>\n"
+                f"📋 Компания: {company_name or 'не указана'}\n"
+                f"📌 Статус: {status_text}\n\n"
+                f"Введите ваши <b>ФИО</b>:",
+                parse_mode="HTML"
+            )
+            await state.set_state(Form.fio)
+    else:
+        await msg.edit_text(
+            "⚠️ <b>ИНН не найден в базе ФНС.</b>\n\n"
+            "Возможные причины:\n"
+            "• Вы ввели ИНН физического лица (не ИП)\n"
+            "• Компания недавно зарегистрирована\n"
+            "• Опечатка в номере\n\n"
+            "<b>Что делаем дальше?</b>",
+            parse_mode="HTML",
+            reply_markup=get_inn_not_found_keyboard()
+        )
+        return
+
+@dp.message(Form.inn)
+async def wrong_inn(message: types.Message):
+    if message.text in ["🚀 Я на стадии регистрации бизнеса", "🚀 Хочу зарегистрировать бизнес", "📞 Связь с менеджером", "↩ В начало", "💻 Заполнить анкету", "💬 Пройти опрос в боте"]:
+        return
+    await message.answer("⚠️ ИНН должен содержать 10 или 12 цифр. Попробуйте снова или нажмите кнопку ниже.")
+
+# ---------- ОБРАБОТКА КНОПОК "ИНН НЕ НАЙДЕН" ----------
+@dp.callback_query(F.data == "retry_inn")
+async def retry_inn(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.edit_text("Введите <b>ИНН</b> еще раз (10 или 12 цифр):", parse_mode="HTML")
+    await state.set_state(Form.inn)
+    await callback.answer()
+
+@dp.callback_query(F.data == "manual_input")
+async def manual_input(callback: types.CallbackQuery, state: FSMContext):
+    await state.update_data(fns_status="Не найден в ФНС (ручной ввод)")
+    await callback.message.edit_text(
+        "✍️ <b>Ручной ввод данных.</b>\n\nВведите ваши <b>ФИО</b>:",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.fio)
+    await callback.answer()
+
+@dp.callback_query(F.data == "future_registration")
+async def future_registration_callback(callback: types.CallbackQuery, state: FSMContext):
+    await state.update_data(fns_status="На стадии регистрации")
+    await callback.message.edit_text(
+        "🚀 <b>Вы на стадии регистрации бизнеса.</b>\n\n"
+        "Введите ваш <b>ИНН</b> (10 или 12 цифр):\n"
+        "<i>Если у вас пока нет ИНН — введите ИНН физического лица.</i>",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.inn)
+    await callback.answer()
+
+@dp.callback_query(F.data == "register_business")
+async def register_business_callback(callback: types.CallbackQuery, state: FSMContext):
+    await handle_register_business(callback, state)
+
+# ---------- СБОР ДАННЫХ ----------
+@dp.message(Form.fio, F.text)
+async def process_fio(message: types.Message, state: FSMContext):
+    if message.text == "🚀 Хочу зарегистрировать бизнес":
+        await handle_register_business(message, state)
+        return
+    if message.text == "📞 Связь с менеджером":
+        await handle_contact_manager(message, state)
+        return
+    if message.text == "🚀 Я на стадии регистрации бизнеса":
+        await future_registration_start(message, state)
+        return
+    if message.text == "↩ В начало":
+        await back_to_start(message, state)
+        return
+
+    await state.update_data(fio=message.text)
+    await message.answer(
+        "📱 Введите ваш <b>номер телефона</b> (например, +79161234567):",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.phone)
+
+@dp.message(Form.phone, F.text)
+async def process_phone(message: types.Message, state: FSMContext):
+    if message.text == "↩ В начало":
+        await back_to_start(message, state)
+        return
+
+    await state.update_data(phone=message.text)
+    await message.answer(
+        "📧 Введите ваш <b>e-mail</b>:",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.email)
+
+@dp.message(Form.email, F.text)
+async def process_email(message: types.Message, state: FSMContext):
+    if message.text == "↩ В начало":
+        await back_to_start(message, state)
+        return
+
+    await state.update_data(email=message.text)
+    user_data = await state.get_data()
+
+    prefill = ""
+    if user_data.get("company") and user_data.get("company") != "Не найдено":
+        prefill = f"\n<i>Найдено в ФНС: {user_data.get('company')}. Можете ввести другое или нажмите Enter, чтобы оставить.</i>"
+
+    await message.answer(
+        f"🏢 Введите <b>название компании</b>:{prefill}",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.company)
+
+@dp.message(Form.company, F.text)
+async def process_company(message: types.Message, state: FSMContext):
+    if message.text == "🚀 Хочу зарегистрировать бизнес":
+        await handle_register_business(message, state)
+        return
+    if message.text == "📞 Связь с менеджером":
+        await handle_contact_manager(message, state)
+        return
+    if message.text == "↩ В начало":
+        await back_to_start(message, state)
+        return
+
+    await state.update_data(company=message.text)
+    await message.answer(
+        "🏙 Введите ваш <b>город</b>:",
+        parse_mode="HTML",
+        reply_markup=get_back_keyboard()
+    )
+    await state.set_state(Form.city)
+
+@dp.message(Form.city, F.text)
+async def process_city(message: types.Message, state: FSMContext):
+    if message.text == "🚀 Хочу зарегистрировать бизнес":
+        await handle_register_business(message, state)
+        return
+    if message.text == "📞 Связь с менеджером":
+        await handle_contact_manager(message, state)
+        return
+    if message.text == "↩ В начало":
+        await back_to_start(message, state)
+        return
+
+    await state.update_data(city=message.text)
+
+    user_data = await state.get_data()
+    summary = (
+        "📋 <b>Проверьте данные:</b>\n\n"
+        f"👤 ФИО: {user_data.get('fio', '—')}\n"
+        f"🔢 ИНН: {user_data.get('inn', '—')}\n"
+        f"📱 Телефон: {user_data.get('phone', '—')}\n"
+        f"📧 Email: {user_data.get('email', '—')}\n"
+        f"🏢 Компания: {user_data.get('company', '—')}\n"
+        f"🏙 Город: {user_data.get('city', '—')}\n"
+        f"📌 Статус: {user_data.get('fns_status', '—')}\n\n"
+        "👇 <b>Выберите банк для открытия счета:</b>"
+    )
+
+    await message.answer(summary, parse_mode="HTML", reply_markup=get_banks_inline_keyboard())
+    await state.set_state(None)
+
+# ---------- ОБРАБОТКА ВЫБОРА БАНКА ----------
+@dp.callback_query(F.data.startswith("bank_"))
+async def process_bank_selection(callback: types.CallbackQuery, state: FSMContext):
+    bank_name = callback.data[5:]
+    user_data = await state.get_data()
+    link = BANK_LINKS.get(bank_name, "#")
+
+    if link == "MANAGER":
+        try:
+            sheet = get_google_sheet()
+            now = datetime.now()
+            sheet.append_row([
+                now.strftime("%d.%m.%Y"),
+                now.strftime("%H:%M:%S"),
+                user_data.get('fio', '—'),
+                user_data.get('inn', '—'),
+                user_data.get('phone', '—'),
+                user_data.get('email', '—'),
+                user_data.get('company', '—'),
+                user_data.get('city', '—'),
+                user_data.get('fns_status', '—'),
+                bank_name,
+                "Оформление через менеджера",
+                "Заявка через менеджера",
+                "Нет"
+            ])
+            logging.info(f"Лид {user_data.get('fio')} на ручное оформление записан")
+        except Exception as e:
+            logging.error(f"Ошибка Google Sheets: {e}")
+
+        response = (
+            f"📋 <b>Заявка принята!</b>\n\n"
+            f"Вы выбрали: <b>{bank_name}</b>\n\n"
+            "Для оформления счета в этом банке нужна помощь менеджера.\n"
+            "Я уже передал ваши данные. Мы свяжемся с вами в ближайшее время.\n\n"
+            'Или напишите мне сами: <a href="https://t.me/Kirilloff_Igor">Написать в Telegram</a>'
+        )
+
+        await callback.message.edit_text(response, parse_mode="HTML", disable_web_page_preview=True)
+        await callback.answer("✅ Заявка передана менеджеру!")
+
+        try:
+            notification = (
+                f"🆕 <b>Заявка на ручное оформление!</b>\n\n"
+                f"🏦 Банк: <b>{bank_name}</b>\n"
+                f"👤 {user_data.get('fio', '—')}\n"
+                f"🔢 ИНН: {user_data.get('inn', '—')}\n"
+                f"📱 Телефон: {user_data.get('phone', '—')}\n"
+                f"📧 Email: {user_data.get('email', '—')}\n"
+                f"🏢 Компания: {user_data.get('company', '—')}\n"
+                f"🏙 Город: {user_data.get('city', '—')}\n\n"
+                "<i>Необходимо завести заявку через партнерский кабинет банка.</i>"
+            )
+            await bot.send_message(MANAGER_CHAT_ID, notification, parse_mode="HTML")
+        except Exception as e:
+            logging.error(f"Ошибка уведомления: {e}")
+        return
+
+    try:
+        sheet = get_google_sheet()
+        now = datetime.now()
+        sheet.append_row([
+            now.strftime("%d.%m.%Y"),
+            now.strftime("%H:%M:%S"),
+            user_data.get('fio', '—'),
+            user_data.get('inn', '—'),
+            user_data.get('phone', '—'),
+            user_data.get('email', '—'),
+            user_data.get('company', '—'),
+            user_data.get('city', '—'),
+            user_data.get('fns_status', '—'),
+            bank_name,
+            link,
+            "Открытие счета",
+            "Нет"
+        ])
+        logging.info(f"Лид {user_data.get('fio')} записан")
+    except Exception as e:
+        logging.error(f"Ошибка Google Sheets: {e}")
+
+    response = (
+        f"✅ <b>Отлично!</b>\n\n"
+        f"Вы выбрали: <b>{bank_name}</b>\n"
+        f"🔗 Ссылка для открытия счета: {link}\n\n"
+        "После оформления с вами свяжется менеджер.\n"
+        'Нужна помощь? <a href="https://t.me/Kirilloff_Igor">Напишите мне в Telegram</a>'
+    )
+
+    await callback.message.edit_text(response, parse_mode="HTML", disable_web_page_preview=True)
+    await callback.answer("✅ Банк выбран!")
+
+    try:
+        notification = (
+            f"🆕 <b>Новый лид!</b>\n\n"
+            f"👤 {user_data.get('fio', '—')}\n"
+            f"🔢 ИНН: {user_data.get('inn', '—')}\n"
+            f"📱 Телефон: {user_data.get('phone', '—')}\n"
+            f"📧 Email: {user_data.get('email', '—')}\n"
+            f"🏢 Компания: {user_data.get('company', '—')}\n"
+            f"🏙 Город: {user_data.get('city', '—')}\n"
+            f"🏦 Банк: <b>{bank_name}</b>\n"
+            f"🔗 Ссылка: {link}"
+        )
+        await bot.send_message(MANAGER_CHAT_ID, notification, parse_mode="HTML")
+    except Exception as e:
+        logging.error(f"Ошибка уведомления: {e}")
+
+# ---------- КНОПКА "СВЯЗЬ С МЕНЕДЖЕРОМ" ----------
+@dp.callback_query(F.data == "contact_manager")
+async def contact_manager_inline(callback: types.CallbackQuery, state: FSMContext):
+    await handle_contact_manager(callback, state)
+
+@dp.message(F.text == "📞 Связь с менеджером")
+async def contact_manager_main(message: types.Message, state: FSMContext):
+    await handle_contact_manager(message, state)
+
+# ---------- ЗАПУСК ----------
+async def main():
+    logging.info("Бот запущен!")
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
