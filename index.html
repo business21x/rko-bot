@@ -386,7 +386,8 @@
         let banksData = [...allBanksData];
         const DADATA_TOKEN = "88b2ea44839acf5933d1d286b4540d8e218c5f58";
         let currentType = "IP";
-
+currentInn = '';
+currentCompany = '';
         document.getElementById('toggleType').addEventListener('click', function(e) {
             if (e.target.classList.contains('toggle-btn')) {
                 document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -478,7 +479,7 @@
             const noResults = document.getElementById('noResults');
             if (banksData.length === 0) { grid.innerHTML = ''; noResults.style.display = 'block'; return; }
             noResults.style.display = 'none';
-            const inn = currentInn || document.getElementById('innInput').value.trim();
+            const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
 
             grid.innerHTML = banksData.map((bank, i) => `
                 <div class="bank-card" id="bank${i}">
