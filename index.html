@@ -183,11 +183,10 @@
     <script src="https://wamm.chat/widget/buttons" data-color="#f6c343" data-size="small" data-position="bottom-right" data-theme="dark" data-show-on="all"></script>
 
     <script>
-        // ============ GOOGLE SHEETS ANALYTICS ============
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPFqqEIe8cgwlwrv-WMXEMAPmYhHhHm4iyU1KU8HL1EObgI04Hff1OwrzSVTDELNpqJnA/exec";
-        let currentFio = '';
-        let currentCompany = '';
+        // ============ НАСТРОЙКИ ============
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPFqqEIe8cgwlwrv-WMXEMAPmYhYhHm4iyU1KU8HL1EObgI04Hff1OwrzSVTDELNpqJnA/exec";
         let currentInn = '';
+        let currentCompany = '';
 
         function sendAnalytics(bankName, inn, action, link) {
             const data = {
@@ -204,8 +203,7 @@
             const params = new URLSearchParams(data).toString();
             const img = new Image();
             img.src = APPS_SCRIPT_URL + "?" + params;
-            
-            console.log('Аналитика отправлена:', data);
+            console.log('Аналитика:', data);
         }
 
         // ============ ДАННЫЕ БАНКОВ ============
@@ -429,8 +427,6 @@
                         company = info.name ? (info.name.full_with_opf || info.name.full || info.name.short || "") : "";
                         document.querySelector('[data-type="OOO"]').click();
                     }
-                    // Сохраняем для аналитики
-                    currentFio = fio;
                     currentCompany = company;
                     if (fio || company) { document.getElementById('autofillInfo').classList.add('show'); document.getElementById('autofillInfo').textContent = `✅ ${fio ? 'ФИО: ' + fio : ''}${fio && company ? ' | ' : ''}${company ? 'Компания: ' + company : ''}`; }
                 }
