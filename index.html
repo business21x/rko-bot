@@ -187,6 +187,7 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPFqqEIe8cgwlwrv-WMXEMAPmYhHhHm4iyU1KU8HL1EObgI04Hff1OwrzSVTDELNpqJnA/exec";
         let currentFio = '';
         let currentCompany = '';
+        let currentInn = '';
 
         function sendAnalytics(bankName, inn, action, link) {
             const data = {
@@ -402,6 +403,7 @@
 
         document.getElementById('innInput').addEventListener('input', function() {
             const inn = this.value.trim();
+            currentInn = inn;
             if (inn.length === 10 || inn.length === 12) checkINN(inn);
         });
 
@@ -480,7 +482,7 @@
             const noResults = document.getElementById('noResults');
             if (banksData.length === 0) { grid.innerHTML = ''; noResults.style.display = 'block'; return; }
             noResults.style.display = 'none';
-            const inn = document.getElementById('innInput').value.trim();
+            const inn = currentInn || document.getElementById('innInput').value.trim();
 
             grid.innerHTML = banksData.map((bank, i) => `
                 <div class="bank-card" id="bank${i}">
