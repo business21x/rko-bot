@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РКО для бизнеса — подбор расчетного счета онлайн</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #121825; --card-bg: #1c2533; --text: #ffffff; --text-secondary: #b0b8c5;
+            --accent: #f6c343; --accent-hover: #e0a800; --green: #4caf50; --border: #2a3547;
+            --slider-track: #2a3547;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        .logo-section { text-align: center; padding: 50px 20px 10px; }
+        .logo-badge { display: inline-block; font-size: 52px; font-weight: 900; letter-spacing: 6px; background: linear-gradient(135deg, #f6c343, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; border: 2px solid #f6c343; border-radius: 18px; padding: 8px 28px; margin-bottom: 16px; }
+
+        .hero { text-align: center; padding: 10px 20px 40px; }
+        .hero a { text-decoration: none; cursor: pointer; }
+        .hero h1 { font-size: 42px; font-weight: 700; margin-bottom: 12px; background: linear-gradient(135deg, #f6c343, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; cursor: pointer; }
+        .hero p { font-size: 18px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        .inn-section { max-width: 500px; margin: 0 auto 30px; text-align: center; }
+        .inn-section input { width: 100%; padding: 14px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 16px; font-family: inherit; text-align: center; }
+        .inn-section input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(246, 195, 67, 0.1); }
+        .inn-section .hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+        .autofill-info { display: none; margin-top: 10px; padding: 12px 16px; background: rgba(76, 175, 80, 0.1); border-radius: 10px; font-size: 13px; color: var(--green); border: 1px solid rgba(76, 175, 80, 0.2); }
+        .autofill-info.show { display: block; }
+
+        .calculator { background: var(--card-bg); border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid var(--border); }
+        .calc-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; text-align: center; }
+        .toggle-group { display: flex; justify-content: center; gap: 0; margin-bottom: 24px; background: var(--bg); border-radius: 12px; overflow: hidden; width: fit-content; margin-left: auto; margin-right: auto; }
+        .toggle-btn { padding: 10px 30px; border: none; background: transparent; color: var(--text-secondary); font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .toggle-btn.active { background: var(--accent); color: #000; }
+        .slider-group { margin-bottom: 20px; }
+        .slider-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .slider-label span:first-child { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .slider-value { font-size: 14px; font-weight: 600; color: var(--accent); }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: var(--slider-track); border-radius: 3px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--accent); border-radius: 50%; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px rgba(246, 195, 67, 0.3); }
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+        .checkbox-label { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 13px; color: var(--text-secondary); }
+        .checkbox-label:hover { border-color: var(--accent); }
+        .checkbox-label input { accent-color: var(--accent); width: 16px; height: 16px; }
+        .btn-row { display: flex; gap: 10px; }
+        .btn-search { flex: 1; padding: 16px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-search:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 8px 25px rgba(246, 195, 67, 0.25); }
+        .btn-reset { padding: 16px 24px; background: transparent; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+        .catalog-title { text-align: center; font-size: 24px; font-weight: 700; margin: 20px 0; }
+        .catalog-title img { width: 32px; height: 32px; vertical-align: middle; margin-right: 10px; }
+        .banks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; align-items: start; }
+
+        .bank-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: 0.3s; cursor: pointer; }
+        .bank-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+        .bank-card.open { border-color: var(--accent); }
+        .bank-card-header { display: flex; align-items: center; gap: 14px; padding: 20px; }
+        .bank-logo { width: 56px; height: 56px; border-radius: 14px; object-fit: contain; background: #fff; padding: 8px; }
+        .bank-name { font-weight: 700; font-size: 17px; }
+        .bank-subtitle { font-size: 12px; color: var(--text-secondary); }
+        .bank-arrow { margin-left: auto; font-size: 20px; color: var(--text-secondary); transition: 0.3s; }
+        .bank-card.open .bank-arrow { transform: rotate(180deg); color: var(--accent); }
+        .bank-details { display: none; padding: 0 20px 20px; border-top: 1px solid var(--border); }
+        .bank-card.open .bank-details { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .tariff-item { margin-bottom: 10px; }
+        .tariff-btn { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .tariff-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .tariff-btn.active { border-color: var(--accent); background: rgba(246, 195, 67, 0.05); }
+        .tariff-content { display: none; padding: 12px 0; }
+        .tariff-content.open { display: block; animation: fadeIn 0.3s ease; }
+        .tariff-table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13px; }
+        .tariff-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .tariff-table td:first-child { color: var(--text-secondary); width: 55%; font-size: 12px; }
+        .tariff-table td:last-child { text-align: right; font-weight: 500; }
+        .tariff-table .green { color: var(--green); }
+        .tariff-table .accent { color: var(--accent); }
+        .features-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .feature-tag { padding: 5px 12px; background: rgba(246, 195, 67, 0.1); color: var(--accent); border-radius: 20px; font-size: 11px; font-weight: 500; }
+        .btn-open { display: block; width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; transition: 0.2s; font-family: inherit; }
+        .btn-open:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(246, 195, 67, 0.3); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; max-width: 700px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal h2 { font-size: 22px; margin-bottom: 16px; color: var(--accent); }
+        .modal p, .modal li { font-size: 14px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.6; }
+        .modal .close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; }
+        .modal .close:hover { color: var(--accent); }
+
+        .footer { margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 30px; font-size: 13px; color: var(--text-secondary); }
+        .footer-left { max-width: 400px; }
+        .footer-left strong { color: var(--text); }
+        .footer-right { display: flex; gap: 30px; flex-wrap: wrap; }
+        .footer-right a { color: var(--text-secondary); text-decoration: none; cursor: pointer; transition: 0.2s; }
+        .footer-right a:hover { color: var(--accent); }
+        .no-results { display: none; text-align: center; padding: 40px; color: var(--text-secondary); }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .banks-grid { grid-template-columns: 1fr; }
+            .footer { flex-direction: column; }
+            .btn-row { flex-direction: column; }
+            .logo-badge { font-size: 36px; padding: 6px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-section"><div class="logo-badge">РКО</div></div>
+        <div class="hero">
+            <a href="#" onclick="resetCalculator(); return false;"><h1>РКО для бизнеса</h1></a>
+            <p>Оформите расчетно-кассовое обслуживание для юридического лица или ИП онлайн</p>
+        </div>
+
+        <div class="inn-section">
+            <input type="text" id="innInput" placeholder="Введите ИНН для автозаполнения" maxlength="12">
+            <div class="hint">Введите ИНН — мы определим статус и подберем подходящие банки</div>
+            <div class="autofill-info" id="autofillInfo"></div>
+        </div>
+
+        <div class="calculator">
+            <div class="calc-title">⚙️ Параметры подбора</div>
+            <div class="toggle-group" id="toggleType">
+                <button class="toggle-btn active" data-type="IP">ИП / Самозанятый</button>
+                <button class="toggle-btn" data-type="OOO">ООО</button>
+            </div>
+            <div class="slider-group">
+                <div class="slider-label"><span>💰 Оборот в месяц</span><span class="slider-value" id="turnoverValue">500 000 ₽</span></div>
+                <input type="range" id="turnover" min="0" max="10000000" step="100000" value="500000">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label"><span>💳 Вывод на карту без комиссии</span><span class="slider-value" id="withdrawValue">150 000 ₽</span></div>
+                <input type="range" id="withdraw" min="0" max="1000000" step="50000" value="150000">
+            </div>
+            <div class="slider-group">
+                <div class="slider-label"><span>📊 Платежи в месяц</span><span class="slider-value" id="paymentsValue">10 шт.</span></div>
+                <input type="range" id="payments" min="0" max="100" step="1" value="10">
+            </div>
+            <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="acquiring"> 💳 Эквайринг</label>
+                <label class="checkbox-label"><input type="checkbox" id="ved"> 🌍 ВЭД</label>
+                <label class="checkbox-label"><input type="checkbox" id="freeService"> 🎁 Бесплатное обслуживание</label>
+            </div>
+            <div class="btn-row">
+                <button class="btn-search" onclick="filterBanks()">🔍 Подобрать банк</button>
+                <button class="btn-reset" onclick="resetCalculator()">🔄 Сбросить</button>
+            </div>
+        </div>
+
+        <div class="catalog-title">
+            <img src="https://img.icons8.com/?size=100&id=dP7OO4TPnEWJ&format=png&color=f6c343" alt="bank"> Выберите банк
+        </div>
+        <div class="banks-grid" id="banksGrid"></div>
+        <div class="no-results" id="noResults">😔 Банков не найдено.<br>Измените фильтры или свяжитесь с менеджером.</div>
+
+        <div class="footer">
+            <div class="footer-left"><strong>ИП ВАСИЛЕВСКАЯ АННА СЕРГЕЕВНА</strong><br>ИНН: 771562419934</div>
+            <div class="footer-right">
+                <a onclick="openModal('partners')">Партнёрская программа</a>
+                <a onclick="openModal('privacy')">Политика конфиденциальности</a>
+                <a onclick="openModal('agreement')">Пользовательское соглашение</a>
+            </div>
+        </div>
+    </div>
+    <!-- Модалки -->
+    <div class="modal-overlay" id="modalPartners"><div class="modal"><button class="close" onclick="closeModal('partners')">×</button><h2>Партнёрская программа</h2><p>Присоединяйтесь к партнёрской программе ИП Василевская Анна Сергеевна. Зарабатывайте на привлечении клиентов на открытие расчётных счетов.</p><ol><li>Свяжитесь с нами через Telegram.</li><li>Получите персональные партнёрские ссылки.</li><li>Размещайте ссылки на своих ресурсах.</li><li>Получайте вознаграждение за каждый открытый счёт.</li></ol><p>Для подключения: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
+    <div class="modal-overlay" id="modalPrivacy"><div class="modal"><button class="close" onclick="closeModal('privacy')">×</button><h2>Политика конфиденциальности</h2><p>ИП Василевская Анна Сергеевна (ИНН 771562419934). Собираем: ИНН, ФИО, телефон, email, компанию, город. Данные используются для подбора счета и передаются только банкам-партнёрам. Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
+    <div class="modal-overlay" id="modalAgreement"><div class="modal"><button class="close" onclick="closeModal('agreement')">×</button><h2>Пользовательское соглашение</h2><p>Сервис предоставляется бесплатно. Решение об открытии счета принимает банк. ИП Василевская Анна Сергеевна (ИНН 771562419934). Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
+
+    <!-- WAMM -->
+    <script>
+        window.WAMM_W1_WidgetConfig = [
+            { "type": "WhatsApp", "url": "https://wa.me/", "id": "79674758478" },
+            { "type": "Telegram", "url": "https://t.me/", "id": "Kirilloff_Igor" },
+            { "type": "Phone", "url": "tel:", "id": "+79674758478" }
+        ];
+    </script>
+    <script src="https://wamm.chat/widget/buttons" data-color="#f6c343" data-size="small" data-position="bottom-right" data-theme="dark" data-show-on="all"></script>
+
+    <script>
+        // ============ GOOGLE SHEETS ANALYTICS ============
+        const SHEET_ID = "1LC27_CnECY0Ipczkf1rCkwGlBli1Q6eDajCc5rXXmAo";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMKr0MOGbtbQmL8nqXskbXAIxemDzgLvb7p0I2kzpjeZbWMIFXffKFnwk5v0zTtf9VTw/exec";
+
+        function sendAnalytics(bankName, inn, action, link) {
+            const data = {
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU'),
+                bank: bankName,
+                inn: inn || '—',
+                action: action,
+                link: link,
+                status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
+            };
+
+            if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbwMKr0MOGbtbQmL8nqXskbXAIxemDzgLvb7p0I2kzpjeZbWMIFXffKFnwk5v0zTtf9VTw/exec") {
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).catch(e => console.log('Analytics error:', e));
+            }
+
+            console.log('Аналитика:', data);
+        }
+
+        // ============ ДАННЫЕ БАНКОВ (30 банков, 3-5 тарифов) ============
+        const allBanksData = [
+            // Т-Банк
+            { name: "Т-Банк", logo: "https://www.tbank.ru/favicon.ico", tariffs: [
+                { name: "Простой", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "По тарифам банка", freePayments: "5 шт., далее 99 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатная бухгалтерия","Кешбэк 5% на налоги"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: true, forIP: true, forOOO: true },
+                { name: "Продвинутый", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено","Персональный менеджер"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true },
+                { name: "Профессиональный", price: "4 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Премиум-поддержка","Валютный контроль","Зарплатный проект"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.8, ved: true, forIP: true, forOOO: true }
+            ], link: "https://www.tbank.ru/business/rko/form?utm_medium=ptr.act&utm_campaign=sme.partners&partnerId=5-3HUOSFNGB&agentId=6-100MO91CO&agentSsoId=b01f5637-93b6-46c2-972a-5332ba31c2fc&utm_source=partner_rko_a_sme" },
+
+            // Альфа-Банк
+            { name: "Альфа-Банк", logo: "https://logo-teka.com/wp-content/uploads/2025/06/alfabank-logo-eng.png", tariffs: [
+                { name: "Ноль за обслуживание", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное обслуживание"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
+                { name: "Простой", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный пакет","ВЭД"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Всё для роста", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи","Кешбэк 3%"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Активные расчёты", price: "4 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Максимальный","Персональный менеджер"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: false, forOOO: true }
+            ], link: "https://rko-group.ru/s/ajrCVQ3Y" },
+
+            // Сбербанк
+            { name: "Сбербанк", logo: "https://www.sberbank.ru/favicon.ico", tariffs: [
+                { name: "Модуль РКО А", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 600 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Базовый","СБП 0%"], withdrawLimit: 600000, freePaymentCount: 3, acquiring: 1.6, ved: false, forIP: true, forOOO: true },
+                { name: "Модуль РКО B", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 600 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный","ВЭД"], withdrawLimit: 600000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Модуль РКО C", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 600 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Оптимальный","0₽ за платежи"], withdrawLimit: 600000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Модуль РКО D", price: "4 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Максимальный","Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: false, forOOO: true }
+            ], link: "https://www.sberbank.com/ru/s_m_business/referral/join?utm_source=0NRBKJSEN0GFH" },
+
+            // ВТБ
+            { name: "ВТБ", logo: "https://www.vtb.ru/favicon.ico", tariffs: [
+                { name: "На старте", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Вывод без ограничений"], withdrawLimit: 999999999, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Простой процент", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 999999999, freePaymentCount: 10, acquiring: 1.3, ved: true, forIP: true, forOOO: true },
+                { name: "Все по делу", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи","Кешбэк 2%"], withdrawLimit: 999999999, freePaymentCount: 50, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Самое важное", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Премиум","Валютный контроль"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true },
+                { name: "Все включено", price: "7 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Максимальный","Зарплатный проект"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.8, ved: true, forIP: true, forOOO: true }
+            ], link: "MANAGER" },
+
+            // Точка
+            { name: "Точка", logo: "https://azecsuwvwypwnkgobujn.supabase.co/storage/v1/object/public/avatars/company-logos/55280544-7ea5-4b2a-98d9-2df3efd60f69.png", tariffs: [
+                { name: "Начало", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "60 ₽", freePayments: "10 шт., далее 60 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 200 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["10 бесплатных платежей","Интеграция с 1С"], withdrawLimit: 200000, freePaymentCount: 10, acquiring: 1.7, ved: true, forIP: true, forOOO: true },
+                { name: "Развитие", price: "4 200 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["3 месяца бесплатно новым","Безлимит"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Корпоративный", price: "7 900 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Персональный менеджер","Зарплатный проект"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/505/1229" },
+
+            // Озон Банк
+            { name: "Озон Банк", logo: "https://logo-teka.com/wp-content/uploads/2025/10/ozon-bank-icon-logo.png", tariffs: [
+                { name: "Начальный", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "79 ₽", freePayments: "5 шт., далее 79 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Кешбэк на Ozon"], withdrawLimit: 100000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: false },
+                { name: "Основной", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Продвинутый", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "PRO", price: "4 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Максимальный","ВЭД"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/rHrZbN" },
+
+            // Остальные банки (кратко)
+            { name: "ДелоБанк", logo: "https://logotic.me/system/assets/uploads/vector-files/delo-1669936465-logotic-brand.svg?width=300&height=300", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "90 ₽", freePayments: "3 шт., далее 90 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Помощь с регистрацией"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/17/1229" },
+
+            { name: "УБРиР", logo: "https://logo-teka.com/wp-content/uploads/2025/08/ubrr-icon-logo.png", tariffs: [
+                { name: "Эконом", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["3% на остаток"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "10 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/369/1229" },
+
+            { name: "Банк Санкт-Петербург", logo: "https://logotic.me/system/assets/uploads/vector-files/bspb-1669939798-logotic-brand.svg?width=300&height=300", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "2%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["ВЭД"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/eVyOesZa" },
+
+            { name: "Совкомбанк", logo: "https://sovcombank.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "5 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 200 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за всё 3 месяца","Кешбэк 2%"], withdrawLimit: 200000, freePaymentCount: 5, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "15 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 400 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 400000, freePaymentCount: 15, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 600 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 600000, freePaymentCount: 50, acquiring: 1.0, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.8, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/460/1229" },
+
+            { name: "Свой Банк", logo: "https://rrrabota.ru/wp-content/uploads/rrr/svoibank-logo.png", tariffs: [
+                { name: "Базовый", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Платежи от 50₽"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Расширенный", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "15 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Больше платежей"], withdrawLimit: 300000, freePaymentCount: 15, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/je9blLqE" },
+
+            { name: "Уралсиб", logo: "https://www.uralsib.ru/favicon.ico", tariffs: [
+                { name: "Бизнес-Лайт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["2 месяца бесплатно"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.7, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/8PFTk6Nq" },
+
+            { name: "ОТП Банк", logo: "https://www.otpbank.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "5 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "15 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 15, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за всё"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/QxwIhG7s" },
+
+            { name: "ПСБ", logo: "https://www.psbank.ru/favicon.ico", tariffs: [
+                { name: "Бизнес-Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["3 месяца бесплатно"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.6, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/493/1229" },
+
+            { name: "Ак Барс", logo: "https://www.akbars.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Халяль-банкинг"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.5, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/19/1229" },
+
+            { name: "Живаго Банк", logo: "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/a5/e9/ae/a5e9ae2e-b181-31a9-ed92-cef77fe531ee/AppIcon-0-0-1x_U007emarketing-0-10-0-0-sRGB-85-220.png/512x512bb.jpg", tariffs: [
+                { name: "Базовый", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Низкие комиссии"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Расширенный", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "15 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Больше платежей"], withdrawLimit: 300000, freePaymentCount: 15, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/140/1229" },
+
+            { name: "Агророс Банк", logo: "https://agroros.ru/favicon.ico", tariffs: [
+                { name: "Фермер", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Для сельского хозяйства"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "10 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/rSbxKfe1" },
+
+            { name: "Руснар Банк (ИП)", logo: "https://rusnarbank.ru/favicon.ico", tariffs: [
+                { name: "ИП-Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "5 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 200 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Только для ИП"], withdrawLimit: 200000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: false },
+                { name: "ИП-Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "15 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 400 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный для ИП"], withdrawLimit: 400000, freePaymentCount: 15, acquiring: 1.3, ved: false, forIP: true, forOOO: false },
+                { name: "ИП-Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 600 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за всё"], withdrawLimit: 600000, freePaymentCount: 50, acquiring: 1.1, ved: true, forIP: true, forOOO: false }
+            ], link: "https://banks-market.com/offer/349/1229" },
+
+            { name: "Руснар Банк (ООО)", logo: "https://rusnarbank.ru/favicon.ico", tariffs: [
+                { name: "ООО-Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "10 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Только для ООО"], withdrawLimit: 500000, freePaymentCount: 10, acquiring: 1.3, ved: true, forIP: false, forOOO: true },
+                { name: "ООО-Базовый", price: "990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 700 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный для ООО"], withdrawLimit: 700000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: false, forOOO: true },
+                { name: "ООО-Оптимальный", price: "2 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Максимальный для ООО"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: false, forOOO: true }
+            ], link: "https://banks-market.com/offer/24/1229" },
+
+            { name: "Примсоцбанк", logo: "https://logotic.me/system/assets/uploads/vector-files/pskb-1669939792-logotic-brand.svg?width=300&height=300", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатный месяц"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "10 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/qLZeYvjM" },
+
+            { name: "Контур Банк", logo: "https://in.kontur.ru/Files/Modules/Article/brandbook/image/logo-kontur/logo.png", tariffs: [
+                { name: "Базовый", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Интеграция с Контур"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
+                { name: "Расширенный", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["ЭДО бесплатно"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/330/1229" },
+
+            { name: "Банк Левобережный", logo: "https://www.nskbl.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/2Q6nJNnH" },
+
+            { name: "Райффайзенбанк", logo: "https://www.raiffeisen.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "2%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["2 месяца бесплатно"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["ВЭД"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Премиум"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/536/1229" },
+
+            { name: "ЭнергоТрансБанк", logo: "https://logotic.me/system/assets/uploads/vector-files/energotransbank-1669939790-logotic-brand.svg?width=300&height=300", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Быстрое открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/239/1229" },
+
+            { name: "Банк Национальный стандарт", logo: "https://www.nsbank.ru/favicon.ico", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/157/1229" },
+
+            { name: "Реалист Банк", logo: "https://realistbank.ru/favicon.ico", tariffs: [
+                { name: "Базовый", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Прозрачные тарифы"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Расширенный", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Без скрытых комиссий"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/QaY3x1HA" },
+
+            { name: "Хайс Банк", logo: "https://ru.joblum.com/uploads/83/82586.png", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Поддержка 24/7"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/238/1229" },
+
+            { name: "Локо Банк", logo: "https://www.lockobank.ru/favicon.ico", tariffs: [
+                { name: "Базовый", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["ВЭД"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: true, forIP: true, forOOO: true },
+                { name: "Расширенный", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Валютный контроль"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: true, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+            ], link: "https://rko-group.ru/s/CYGxfixU" },
+
+            { name: "Бланк Банк", logo: "https://chehov-vid.ru/upload/iblock/5fd/93am6w2wdks9q11rwwo87yr3m5f42xks.jpg", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Быстрое открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "https://banks-market.com/offer/52/1229" },
+
+            { name: "БКС Банк", logo: "https://bcs-bank.com/favicon.ico", tariffs: [
+                { name: "Инвестиционный", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["5% на остаток"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: true, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Инвестиции"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: true, forIP: true, forOOO: true },
+                { name: "Премиум", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Брокерский счёт"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "MANAGER" },
+
+            { name: "Кубань Кредит", logo: "https://logotic.me/system/assets/uploads/vector-files/kk-bank-1669938973-logotic-brand.svg?width=300&height=300", tariffs: [
+                { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Для южных регионов"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
+                { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Льготные кредиты"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
+                { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Агробизнес"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+            ], link: "MANAGER" }
+        ];
+
+        // ============ ЛОГИКА ============
+        let banksData = [...allBanksData];
+        const DADATA_TOKEN = "88b2ea44839acf5933d1d286b4540d8e218c5f58";
+        let currentType = "IP";
+
+        document.getElementById('toggleType').addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-btn')) {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentType = e.target.dataset.type;
+            }
+        });
+
+        document.getElementById('turnover').addEventListener('input', function() { document.getElementById('turnoverValue').textContent = Number(this.value).toLocaleString() + ' ₽'; });
+        document.getElementById('withdraw').addEventListener('input', function() { document.getElementById('withdrawValue').textContent = Number(this.value).toLocaleString() + ' ₽'; });
+        document.getElementById('payments').addEventListener('input', function() { document.getElementById('paymentsValue').textContent = this.value + ' шт.'; });
+
+        document.getElementById('innInput').addEventListener('input', function() {
+            const inn = this.value.trim();
+            if (inn.length === 10 || inn.length === 12) checkINN(inn);
+        });
+
+        async function checkINN(inn) {
+            try {
+                const response = await fetch("https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party", {
+                    method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Token " + DADATA_TOKEN },
+                    body: JSON.stringify({ query: inn })
+                });
+                const data = await response.json();
+                if (data.suggestions && data.suggestions.length > 0) {
+                    const info = data.suggestions[0].data;
+                    const status = info.type;
+                    let fio = "", company = "";
+                    if (status === "INDIVIDUAL_ENTREPRENEUR" || status === "SELF_EMPLOYED" || status === "INDIVIDUAL") {
+                        if (info.name) fio = info.name.full || info.name.short || "";
+                        if (!fio && info.fio) { const p = []; if (info.fio.surname) p.push(info.fio.surname); if (info.fio.name) p.push(info.fio.name); if (info.fio.patronymic) p.push(info.fio.patronymic); fio = p.join(" "); }
+                        company = "ИП " + fio;
+                        document.querySelector('[data-type="IP"]').click();
+                    } else if (status === "LEGAL") {
+                        if (info.management) fio = info.management.name || "";
+                        if (!fio && info.fio) { const p = []; if (info.fio.surname) p.push(info.fio.surname); if (info.fio.name) p.push(info.fio.name); if (info.fio.patronymic) p.push(info.fio.patronymic); fio = p.join(" "); }
+                        company = info.name ? (info.name.full_with_opf || info.name.full || info.name.short || "") : "";
+                        document.querySelector('[data-type="OOO"]').click();
+                    }
+                    if (fio || company) { document.getElementById('autofillInfo').classList.add('show'); document.getElementById('autofillInfo').textContent = `✅ ${fio ? 'ФИО: ' + fio : ''}${fio && company ? ' | ' : ''}${company ? 'Компания: ' + company : ''}`; }
+                }
+            } catch (e) { console.log(e); }
+        }
+
+        function filterBanks() {
+            const withdraw = Number(document.getElementById('withdraw').value);
+            const payments = Number(document.getElementById('payments').value);
+            const acquiring = document.getElementById('acquiring').checked;
+            const ved = document.getElementById('ved').checked;
+            const freeService = document.getElementById('freeService').checked;
+            banksData = allBanksData.filter(bank => {
+                const best = bank.tariffs.reduce((b, t) => {
+                    if (currentType === "IP" && !t.forIP) return b;
+                    if (currentType === "OOO" && !t.forOOO) return b;
+                    if (acquiring && !t.acquiring) return b;
+                    if (ved && !t.ved) return b;
+                    if (freeService && t.price !== "0 ₽/мес") return b;
+                    if (withdraw > (t.withdrawLimit || 100000)) return b;
+                    if (!b || t.withdrawLimit > b.withdrawLimit) return t;
+                    return b;
+                }, null);
+                return best !== null;
+            });
+            renderAllBanks();
+        }
+
+        function resetCalculator() {
+            document.getElementById('turnover').value = 500000;
+            document.getElementById('withdraw').value = 150000;
+            document.getElementById('payments').value = 10;
+            document.getElementById('acquiring').checked = false;
+            document.getElementById('ved').checked = false;
+            document.getElementById('freeService').checked = false;
+            document.getElementById('turnoverValue').textContent = '500 000 ₽';
+            document.getElementById('withdrawValue').textContent = '150 000 ₽';
+            document.getElementById('paymentsValue').textContent = '10 шт.';
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-type="IP"]').classList.add('active');
+            currentType = "IP";
+            banksData = [...allBanksData];
+            renderAllBanks();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderAllBanks() {
+            const grid = document.getElementById('banksGrid');
+            const noResults = document.getElementById('noResults');
+            if (banksData.length === 0) { grid.innerHTML = ''; noResults.style.display = 'block'; return; }
+            noResults.style.display = 'none';
+            const inn = document.getElementById('innInput').value.trim();
+
+            grid.innerHTML = banksData.map((bank, i) => `
+                <div class="bank-card" id="bank${i}">
+                    <div class="bank-card-header" onclick="toggleBank(${i})">
+                        <img src="${bank.logo}" alt="${bank.name}" class="bank-logo" onerror="this.style.display='none'">
+                        <div><div class="bank-name">${bank.name}</div><div class="bank-subtitle">${bank.tariffs.length} тариф${bank.tariffs.length > 1 ? 'а' : ''}</div></div>
+                        <span class="bank-arrow">▼</span>
+                    </div>
+                    <div class="bank-details">
+                        ${bank.tariffs.map((t, ti) => `
+                            <div class="tariff-item">
+                                <button class="tariff-btn" onclick="event.stopPropagation(); toggleTariff(${i}, ${ti})">
+                                    📋 «${t.name}» — <span class="green">${t.price}</span>
+                                    <span style="font-size:12px;color:var(--text-secondary)">▼</span>
+                                </button>
+                                <div class="tariff-content" id="tariff${i}_${ti}">
+                                    <table class="tariff-table">
+                                        <tr><td>💰 Обслуживание</td><td class="green">${t.price}</td></tr>
+                                        <tr><td>💸 Комиссия за перевод ФЛ</td><td>${t.transferFL}</td></tr>
+                                        <tr><td>🔄 Внутри банка</td><td>${t.insideBank}</td></tr>
+                                        <tr><td>🏦 В другие банки</td><td>${t.toOtherBanks}</td></tr>
+                                        <tr><td>📊 Платежи ЮЛ</td><td>${t.freePayments}</td></tr>
+                                        <tr><td>📥 Поступления</td><td>${t.incoming}</td></tr>
+                                        <tr><td>💳 Снятие (касса)</td><td>${t.cashOutOffice}</td></tr>
+                                        <tr><td>💳 Снятие (карта)</td><td>${t.cashOutCard}</td></tr>
+                                        <tr><td>💰 Внесение (касса)</td><td>${t.cashInOffice}</td></tr>
+                                        <tr><td>💰 Внесение (карта)</td><td>${t.cashInCard}</td></tr>
+                                    </table>
+                                    <div class="features-list">${t.features.map(f => `<span class="feature-tag">⭐ ${f}</span>`).join('')}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${bank.link === "MANAGER"
+                            ? `<a href="https://t.me/Kirilloff_Igor" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor')">📝 Оставить заявку</a>`
+                            : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleBank(i) { document.getElementById('bank' + i).classList.toggle('open'); }
+        function toggleTariff(bankIdx, tariffIdx) {
+            const el = document.getElementById('tariff' + bankIdx + '_' + tariffIdx);
+            const btn = el.previousElementSibling;
+            el.classList.toggle('open');
+            btn.classList.toggle('active');
+        }
+
+        function openModal(t) { document.getElementById('modal' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active'); }
+        function closeModal(t) { document.getElementById('modal' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); }));
+
+        renderAllBanks();
+    </script>
+</body>
+</html>
