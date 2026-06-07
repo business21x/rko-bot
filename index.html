@@ -169,12 +169,10 @@
         </div>
     </div>
 
-    <!-- Модалки -->
     <div class="modal-overlay" id="modalPartners"><div class="modal"><button class="close" onclick="closeModal('partners')">×</button><h2>Партнёрская программа</h2><p>Присоединяйтесь к партнёрской программе ИП Василевская Анна Сергеевна. Зарабатывайте на привлечении клиентов на открытие расчётных счетов.</p><ol><li>Свяжитесь с нами через Telegram.</li><li>Получите персональные партнёрские ссылки.</li><li>Размещайте ссылки на своих ресурсах.</li><li>Получайте вознаграждение за каждый открытый счёт.</li></ol><p>Для подключения: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
     <div class="modal-overlay" id="modalPrivacy"><div class="modal"><button class="close" onclick="closeModal('privacy')">×</button><h2>Политика конфиденциальности</h2><p>ИП Василевская Анна Сергеевна (ИНН 771562419934). Собираем: ИНН, ФИО, телефон, email, компанию, город. Данные используются для подбора счета и передаются только банкам-партнёрам. Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
     <div class="modal-overlay" id="modalAgreement"><div class="modal"><button class="close" onclick="closeModal('agreement')">×</button><h2>Пользовательское соглашение</h2><p>Сервис предоставляется бесплатно. Решение об открытии счета принимает банк. ИП Василевская Анна Сергеевна (ИНН 771562419934). Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
 
-    <!-- WAMM -->
     <script>
         window.WAMM_W1_WidgetConfig = [
             { "type": "WhatsApp", "url": "https://wa.me/", "id": "79674758478" },
@@ -186,7 +184,9 @@
 
     <script>
         // ============ GOOGLE SHEETS ANALYTICS ============
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxCNdugnOSJvp5RhJ6XaTayVjtkB5hcgQ1xY0ZD5IabREXRlmDGJj-0vexviUhJp3k-Q/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNjGqQWDgwX1yXAc8SPmx1n3NzUYna_-8ZEtUKNF9DUEUawgNkImdQm8o0o89aHiG6/exec";
+        let currentFio = '';
+        let currentCompany = '';
 
         function sendAnalytics(bankName, inn, action, link) {
             const data = {
@@ -194,6 +194,7 @@
                 time: new Date().toLocaleTimeString('ru-RU'),
                 bank: bankName,
                 inn: inn || '—',
+                company: currentCompany || '—',
                 action: action,
                 link: link,
                 status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
@@ -206,7 +207,7 @@
             console.log('Аналитика отправлена:', data);
         }
 
-        // ============ ДАННЫЕ БАНКОВ (30 банков) ============
+        // ============ ДАННЫЕ БАНКОВ ============
         const allBanksData = [
             { name: "Т-Банк", logo: "https://www.tbank.ru/favicon.ico", tariffs: [
                 { name: "Простой", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "По тарифам банка", freePayments: "5 шт., далее 99 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатная бухгалтерия","Кешбэк 5% на налоги"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: true, forIP: true, forOOO: true },
@@ -426,6 +427,9 @@
                         company = info.name ? (info.name.full_with_opf || info.name.full || info.name.short || "") : "";
                         document.querySelector('[data-type="OOO"]').click();
                     }
+                    // Сохраняем для аналитики
+                    currentFio = fio;
+                    currentCompany = company;
                     if (fio || company) { document.getElementById('autofillInfo').classList.add('show'); document.getElementById('autofillInfo').textContent = `✅ ${fio ? 'ФИО: ' + fio : ''}${fio && company ? ' | ' : ''}${company ? 'Компания: ' + company : ''}`; }
                 }
             } catch (e) { console.log(e); }
