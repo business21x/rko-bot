@@ -188,16 +188,23 @@
         const SHEET_ID = "1LC27_CnECY0Ipczkf1rCkwGlBli1Q6eDajCc5rXXmAo";
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoC8Ts5LhPmvJ1Sw-GRFeZ74nbWQGMMxZCTSg768EwFHpxZrzQNh8LpbAh5abQlG0fvg/exec";
 
-        function sendAnalytics(bankName, inn, action, link) {
-            const data = {
-                date: new Date().toLocaleDateString('ru-RU'),
-                time: new Date().toLocaleTimeString('ru-RU'),
-                bank: bankName,
-                inn: inn || '—',
-                action: action,
-                link: link,
-                status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
-            };
+       function sendAnalytics(bankName, inn, action, link) {
+    const data = {
+        date: new Date().toLocaleDateString('ru-RU'),
+        time: new Date().toLocaleTimeString('ru-RU'),
+        bank: bankName,
+        inn: inn || '—',
+        action: action,
+        link: link,
+        status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
+    };
+
+    const params = new URLSearchParams(data).toString();
+    const img = new Image();
+    img.src = APPS_SCRIPT_URL + "?" + params;
+    
+    console.log('Аналитика отправлена:', data);
+}
 
             if (APPS_SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbwMKr0MOGbtbQmL8nqXskbXAIxemDzgLvb7p0I2kzpjeZbWMIFXffKFnwk5v0zTtf9VTw/exec") {
                 fetch(APPS_SCRIPT_URL, {
