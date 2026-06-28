@@ -102,7 +102,6 @@
         .info-list p { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; text-align: left; }
         .info-list ul { color: var(--text-secondary); font-size: 13px; padding-left: 20px; line-height: 1.8; text-align: left; }
 
-        /* Модальные окна в стиле вашей формы */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; }
@@ -277,17 +276,63 @@
         <div class="footer">
             <div class="footer-left"><strong>ИП ВАСИЛЕВСКАЯ АННА СЕРГЕЕВНА</strong><br>ИНН: 771562419934</div>
             <div class="footer-right">
-                <a onclick="openModal('partners')">Партнёрская программа</a>
-                <a onclick="openModal('privacy')">Политика конфиденциальности</a>
-                <a onclick="openModal('agreement')">Пользовательское соглашение</a>
+                <a onclick="openFooterModal('partners')">Партнёрская программа</a>
+                <a onclick="openFooterModal('privacy')">Политика конфиденциальности</a>
+                <a onclick="openFooterModal('agreement')">Пользовательское соглашение</a>
             </div>
         </div>
     </div>
 
-    <!-- Модальные окна в футере -->
-    <div class="modal-overlay" id="modalPartners"><div class="modal"><button class="close" onclick="closeModal('partners')">×</button><h2>Партнёрская программа</h2><p>Присоединяйтесь к партнёрской программе ИП Василевская Анна Сергеевна. Зарабатывайте на привлечении клиентов на открытие расчётных счетов.</p><ol><li>Свяжитесь с нами через Telegram.</li><li>Получите персональные партнёрские ссылки.</li><li>Размещайте ссылки на своих ресурсах.</li><li>Получайте вознаграждение за каждый открытый счёт.</li></ol><p>Для подключения: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
-    <div class="modal-overlay" id="modalPrivacy"><div class="modal"><button class="close" onclick="closeModal('privacy')">×</button><h2>Политика конфиденциальности</h2><p>ИП Василевская Анна Сергеевна (ИНН 771562419934). Собираем: ИНН, ФИО, телефон, email, компанию, город. Данные используются для подбора счета и передаются только банкам-партнёрам. Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
-    <div class="modal-overlay" id="modalAgreement"><div class="modal"><button class="close" onclick="closeModal('agreement')">×</button><h2>Пользовательское соглашение</h2><p>Сервис предоставляется бесплатно. Решение об открытии счета принимает банк. ИП Василевская Анна Сергеевна (ИНН 771562419934). Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
+    <!-- Модальные окна в футере (информационные) -->
+    <div class="modal-overlay" id="footerModalPartners">
+        <div class="modal">
+            <button class="close" onclick="closeFooterModal('partners')">×</button>
+            <h1>Партнёрская программа</h1>
+            <p style="color:var(--text-secondary); line-height:1.6;">
+                Присоединяйтесь к партнёрской программе ИП Василевская Анна Сергеевна.<br>
+                Зарабатывайте на привлечении клиентов на открытие расчётных счетов.
+            </p>
+            <ol style="color:var(--text-secondary); margin-left:20px; margin-top:12px; line-height:1.8;">
+                <li>Свяжитесь с нами через Telegram.</li>
+                <li>Получите персональные партнёрские ссылки.</li>
+                <li>Размещайте ссылки на своих ресурсах.</li>
+                <li>Получайте вознаграждение за каждый открытый счёт.</li>
+            </ol>
+            <p style="margin-top:16px; color:var(--text-secondary);">
+                Для подключения: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="footerModalPrivacy">
+        <div class="modal">
+            <button class="close" onclick="closeFooterModal('privacy')">×</button>
+            <h1>Политика конфиденциальности</h1>
+            <p style="color:var(--text-secondary); line-height:1.6;">
+                ИП Василевская Анна Сергеевна (ИНН 771562419934).<br>
+                Собираем: ИНН, ФИО, телефон, email, компанию, город.<br>
+                Данные используются для подбора счета и передаются только банкам-партнёрам.
+            </p>
+            <p style="margin-top:16px; color:var(--text-secondary);">
+                Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="footerModalAgreement">
+        <div class="modal">
+            <button class="close" onclick="closeFooterModal('agreement')">×</button>
+            <h1>Пользовательское соглашение</h1>
+            <p style="color:var(--text-secondary); line-height:1.6;">
+                Сервис предоставляется бесплатно.<br>
+                Решение об открытии счета принимает банк.<br>
+                ИП Василевская Анна Сергеевна (ИНН 771562419934).
+            </p>
+            <p style="margin-top:16px; color:var(--text-secondary);">
+                Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a>
+            </p>
+        </div>
+    </div>
 
     <!-- Модальное окно для ВТБ -->
     <div class="modal-overlay" id="vtbModal">
@@ -558,7 +603,8 @@
                 tariffs: [
                     { name: "Фермер", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Для сельского хозяйства"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "10 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                    { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://rko-group.ru/s/rSbxKfe1"
             },
@@ -609,8 +655,7 @@
                 tariffs: [
                     { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
-                    { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://rko-group.ru/s/2Q6nJNnH"
             },
@@ -631,8 +676,7 @@
                 tariffs: [
                     { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Быстрое открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
-                    { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://banks-market.com/offer/239/1229"
             },
@@ -889,7 +933,15 @@
             });
         });
 
-        // Модалки
+        // Футер модалки
+        function openFooterModal(type) {
+            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+        }
+        function closeFooterModal(type) {
+            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
+        }
+
+        // Модалки ВТБ / Точка
         function openVtbModal() { document.getElementById('vtbModal').classList.add('active'); document.getElementById('vtbStatus').textContent = ''; }
         function openTochkaModal() { document.getElementById('tochkaModal').classList.add('active'); document.getElementById('tochkaStatus').textContent = ''; }
 
