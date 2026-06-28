@@ -296,18 +296,15 @@
     <script src="https://wamm.chat/widget/buttons" data-color="#f6c343" data-size="small" data-position="bottom-right" data-theme="dark" data-show-on="all"></script>
 
     <script>
-        // ============ ПОДКЛЮЧЕНИЕ БЕЗОПАСНОГО КОНФИГА ============
-        // Токен загружается из отдельного файла config.js, который НЕ содержит индекс.html
+        // ============ БЕЗОПАСНАЯ ЗАГРУЗКА КОНФИГА ============
         let TELEGRAM_TOKEN = "";
         let TELEGRAM_CHAT_ID = "";
         let APPS_SCRIPT_URL = "";
 
-        // Загружаем конфиг
         async function loadConfig() {
             try {
                 const response = await fetch('config.js');
                 const text = await response.text();
-                // Парсим переменные из config.js
                 const tokenMatch = text.match(/TELEGRAM_TOKEN\s*=\s*["'](.+?)["']/);
                 const chatMatch = text.match(/TELEGRAM_CHAT_ID\s*=\s*["'](.+?)["']/);
                 const scriptMatch = text.match(/APPS_SCRIPT_URL\s*=\s*["'](.+?)["']/);
@@ -318,11 +315,11 @@
                 
                 console.log('✅ Конфиг загружен');
             } catch (e) {
-                console.error('❌ Ошибка загрузки config.js:', e);
+                console.log('⚠️ config.js не найден. Работаем без отправки в бот.');
             }
         }
 
-        // Загружаем конфиг при старте
+        // Загружаем конфиг (не блокируем отрисовку)
         loadConfig();
 
         // ============ НАСТРОЙКИ ============
@@ -331,7 +328,10 @@
 
         // Отправка аналитики в Google Таблицу
         function sendAnalytics(bankName, action, link) {
-            if (!APPS_SCRIPT_URL) return;
+            if (!APPS_SCRIPT_URL) {
+                console.log('Аналитика пропущена: нет APPS_SCRIPT_URL');
+                return;
+            }
             const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
             const data = {
                 date: new Date().toLocaleDateString('ru-RU'),
@@ -352,7 +352,7 @@
         // Отправка в Telegram бота (команды для бота)
         async function sendToBot(command, bank, inn, company, fio, phone, city, email) {
             if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
-                console.error('❌ Токен Telegram не загружен (проверьте config.js)');
+                console.log('Отправка в бот пропущена: нет токена');
                 return;
             }
             const message = `${command}|${inn}|${company}|${fio}|${phone}|${city}|${email}`;
@@ -652,7 +652,8 @@
                 tariffs: [
                     { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                    { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://rko-group.ru/s/2Q6nJNnH"
             },
