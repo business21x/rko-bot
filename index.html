@@ -19,6 +19,8 @@
             --slider-track: #2a3547;
             --slider-fill: #f6c343;
             --section-bg: #16202e;
+            --card-hover-transform: translateY(-6px);
+            --card-hover-shadow: 0 12px 30px rgba(246, 195, 67, 0.15);
         }
 
         * {
@@ -226,27 +228,6 @@
             box-shadow: 0 8px 25px rgba(246, 195, 67, 0.25);
         }
 
-        /* Кнопка сброса */
-        .btn-reset {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: inherit;
-            margin-top: 12px;
-        }
-        .btn-reset:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
         /* Результаты */
         .results-header {
             text-align: center;
@@ -267,20 +248,22 @@
             gap: 16px;
         }
 
-        /* Карточка банка */
+        /* Карточка банка - стиль с наведением и эффектами */
         .bank-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 20px;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: fadeInUp 0.4s ease;
+            cursor: default;
         }
         .bank-card:hover {
             border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            transform: var(--card-hover-transform);
+            box-shadow: var(--card-hover-shadow);
         }
+
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -367,11 +350,15 @@
             cursor: pointer;
             text-align: center;
             text-decoration: none;
-            transition: 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-open:hover {
             background: var(--accent-hover);
+            transform: scale(1.02);
             box-shadow: 0 6px 20px rgba(246, 195, 67, 0.3);
+        }
+        .btn-open:active {
+            transform: scale(0.98);
         }
 
         /* Нет результатов */
@@ -381,7 +368,7 @@
             color: var(--text-secondary);
         }
 
-        /* Связь с менеджером */
+        /* Связь с менеджером - ваш исходный блок */
         .contact-section {
             text-align: center;
             margin-top: 40px;
@@ -414,16 +401,23 @@
         .btn-contact:hover {
             border-color: var(--accent);
             color: var(--accent);
+            transform: translateY(-2px);
         }
         .btn-contact.telegram {
             background: #2aabee;
             color: #fff;
             border: none;
         }
+        .btn-contact.telegram:hover {
+            background: #069ed4;
+        }
         .btn-contact.whatsapp {
             background: #25d366;
             color: #fff;
             border: none;
+        }
+        .btn-contact.whatsapp:hover {
+            background: #1da851;
         }
 
         /* Адаптив */
@@ -463,6 +457,11 @@
             width: 90%;
             border: 1px solid var(--border);
             position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         .close {
             position: absolute;
@@ -515,8 +514,9 @@
             margin-bottom: 12px;
             color: var(--text);
         }
-        .registration-card p {
+        .registration-card .subtitle {
             color: var(--text-secondary);
+            font-size: 14px;
             margin-bottom: 20px;
         }
         .registration-grid {
@@ -535,12 +535,13 @@
         }
         .reg-card:hover {
             border-color: var(--accent);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
         .reg-card .reg-bank-name {
             font-weight: 600;
             font-size: 14px;
             margin-bottom: 8px;
+            color: var(--text);
         }
         .reg-card .reg-btn {
             display: inline-block;
@@ -556,13 +557,7 @@
         }
         .reg-card .reg-btn:hover {
             background: var(--accent-hover);
-        }
-        .reg-card .reg-btn.manager {
-            background: #2aabee;
-            color: #fff;
-        }
-        .reg-card .reg-btn.manager:hover {
-            background: #069ed4;
+            transform: scale(1.02);
         }
 
         /* Бухгалтерское обслуживание и Юридические услуги */
@@ -604,11 +599,23 @@
         }
         .service-item:hover {
             border-color: var(--accent);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
-        .service-item h4 {
-            color: var(--text-secondary);
-            font-weight: 400;
+        .service-item .reg-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #000;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            margin: 4px;
+            transition: 0.2s;
+        }
+        .service-item .reg-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -674,10 +681,8 @@
                 </label>
             </div>
 
-            <!-- Кнопка подбора -->
+            <!-- Кнопка -->
             <button class="btn-search" onclick="filterBanks()">🔍 Подобрать банк</button>
-            <!-- Кнопка сброса -->
-            <button class="btn-reset" onclick="resetFilters()">🔄 Сбросить фильтры</button>
         </div>
 
         <!-- Результаты -->
@@ -703,12 +708,19 @@
         <!-- Регистрация бизнеса -->
         <div class="registration-section">
             <div class="registration-card">
-                <h2>🚀 Оформите заявку на регистрацию бизнеса в течение 15 минут</h2>
-                <p>Помогаем с регистрацией любых форм бизнеса, подготавливаем документы, юридическое и бухгалтерское сопровождение.</p>
-                <button class="btn-search" onclick="openRegistrationModal()" style="max-width: 400px; margin: 0 auto;">📋 Оставить заявку на регистрацию</button>
+                <h2>Оформите заявку на регистрацию бизнеса в течение 15 минут</h2>
+                <div class="subtitle">
+                    📌 Получение ИНН, СНИЛС, выпуск ЭЦП — удаленно. Предоставление временной регистрации, открытие расчетных счетов — удаленно.
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Помогаем с регистрацией любых форм бизнеса, предоставление юридического адреса, подготавливаем документы, юридическое и бухгалтерское сопровождение.
+                </p>
+                <a href="https://t.me/kirilloff_igor" class="btn-search" style="max-width: 400px; margin: 0 auto; text-align: center; text-decoration: none;">📋 Оставить заявку на регистрацию</a>
+                
                 <div style="margin-top: 20px; text-align: left; background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
                     <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;"><strong>Для регистрации Вам потребуется:</strong></p>
                     <ul style="color: var(--text-secondary); font-size: 13px; padding-left: 20px; line-height: 1.8;">
+                        <li>Гарантийное письмо (юридический адрес для юрлиц)</li>
                         <li>Фотографии паспорта (основной разворот и страницы регистрации)</li>
                         <li>СНИЛС</li>
                         <li>ИНН</li>
@@ -718,6 +730,7 @@
                         <li>Размер уставного капитала (для ООО)</li>
                     </ul>
                 </div>
+
                 <div style="margin-top: 20px; background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
                     <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;"><strong>Сервис самостоятельной регистрации:</strong></p>
                     <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">Зарегистрируйте бизнес бесплатно, за 3 дня. Без поездок в налоговую и очередей. Без оплаты госпошлин. Выберите банк-партнёра:</p>
@@ -748,28 +761,29 @@
                         </div>
                         <div class="reg-card">
                             <div class="reg-bank-name">Точка</div>
-                            <a href="https://t.me/Kirilloff_Igor" class="reg-btn manager" target="_blank">Написать в Telegram</a>
+                            <a href="https://t.me/kirilloff_igor" class="reg-btn" target="_blank">Написать в Telegram</a>
                         </div>
                         <div class="reg-card">
                             <div class="reg-bank-name">Нужна помощь?</div>
-                            <a href="https://t.me/Kirilloff_Igor" class="reg-btn manager" target="_blank">Написать менеджеру</a>
+                            <a href="https://t.me/kirilloff_igor" class="reg-btn" target="_blank">Написать менеджеру</a>
                         </div>
                     </div>
                 </div>
-                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 20px;">📌 Получение ИНН, СНИЛС, выпуск ЭЦП — удаленно. Предоставление временной регистрации, открытие расчетных счетов — удаленно.</p>
             </div>
         </div>
 
         <!-- Бухгалтерское обслуживание и Юридические услуги -->
         <div class="services-section">
             <div class="services-card">
-                <h2>📊 Бухгалтерское обслуживание и Юридические услуги</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 20px;">Скоро здесь появится полный спектр услуг для вашего бизнеса.</p>
+                <h2>Бухгалтерское обслуживание и Юридические услуги</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Профессиональная поддержка вашего бизнеса</p>
                 <div class="services-grid">
-                    <div class="service-item"><h4>Бухгалтерское обслуживание</h4></div>
-                    <div class="service-item"><h4>Юридические услуги</h4></div>
-                    <div class="service-item"><h4>Налоговое консультирование</h4></div>
-                    <div class="service-item"><h4>Кадровый учет</h4></div>
+                    <div class="service-item">
+                        <a href="https://t.me/kirilloff_igor" class="reg-btn" target="_blank">Бухгалтерское обслуживание</a>
+                    </div>
+                    <div class="service-item">
+                        <a href="https://t.me/kirilloff_igor" class="reg-btn" target="_blank">Юридические услуги</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -871,7 +885,7 @@
                 forIP: true,
                 forOOO: true,
                 features: ["10 бесплатных платежей", "Вывод до 200 000", "Интеграция с 1С"],
-                link: "modal_tochka"
+                link: "modal"
             },
             {
                 name: "Озон Банк",
@@ -1588,22 +1602,6 @@
 
             // Скролл к результатам
             resultsHeader.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Сброс фильтров
-        function resetFilters() {
-            document.getElementById('innInput').value = '';
-            document.getElementById('autofillInfo').classList.remove('show');
-            document.getElementById('turnover').value = '500000';
-            document.getElementById('turnoverValue').textContent = '500 000 ₽';
-            document.getElementById('withdraw').value = '150000';
-            document.getElementById('withdrawValue').textContent = '150 000 ₽';
-            document.getElementById('payments').value = '10';
-            document.getElementById('paymentsValue').textContent = '10 шт.';
-            document.getElementById('acquiring').checked = false;
-            document.getElementById('ved').checked = false;
-            document.getElementById('freeService').checked = false;
-            filterBanks();
         }
 
         // Первичная загрузка
