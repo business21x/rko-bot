@@ -827,8 +827,10 @@
 
             grid.innerHTML = banksData.map((bank, i) => {
                 const actionBtn = bank.link === "modal"
-                    ? `<button class="btn-open" onclick="openModalForm('${bank.name}', '/site_request_${bank.name.toLowerCase()}')">📝 Оставить заявку</button>`
-                    : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`;
+    ? `<button class="btn-open" onclick="openModalForm('${bank.name}', '/site_request_${bank.name.toLowerCase()}')">📝 Оставить заявку</button>`
+    : bank.link === "modal_tochka"
+        ? `<button class="btn-open" onclick="openModalForm('${bank.name}', '/site_request_${bank.name.toLowerCase()}')">📝 Оставить заявку</button>`
+        : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`;
 
                 return `
                 <div class="bank-card" id="bank${i}">
