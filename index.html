@@ -85,6 +85,23 @@
         .btn-open { display: block; width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; transition: 0.2s; font-family: inherit; }
         .btn-open:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(246, 195, 67, 0.3); }
 
+        /* Стили для новых разделов (Регистрация и Бухгалтерия) */
+        .extra-section { margin: 50px 0 30px; }
+        .extra-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px; text-align: center; }
+        .extra-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+        .extra-card .subtitle { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
+        .extra-card p { color: var(--text-secondary); font-size: 15px; margin-bottom: 20px; line-height: 1.6; }
+        .extra-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+        .extra-item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; transition: 0.3s; }
+        .extra-item:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .extra-item .item-name { font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--text); }
+        .extra-item .item-btn { display: inline-block; padding: 8px 16px; background: var(--accent); color: #000; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 4px; transition: 0.2s; }
+        .extra-item .item-btn:hover { background: var(--accent-hover); transform: scale(1.02); }
+        .extra-item .item-btn.full { width: 100%; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 6px; }
+        .info-list { text-align: left; background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin: 20px 0; }
+        .info-list p { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; text-align: left; }
+        .info-list ul { color: var(--text-secondary); font-size: 13px; padding-left: 20px; line-height: 1.8; text-align: left; }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; max-width: 700px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; }
@@ -103,7 +120,7 @@
 
         @media (max-width: 768px) {
             .hero h1 { font-size: 28px; }
-            .banks-grid { grid-template-columns: 1fr; }
+            .banks-grid, .extra-grid { grid-template-columns: 1fr; }
             .footer { flex-direction: column; }
             .btn-row { flex-direction: column; }
             .logo-badge { font-size: 36px; padding: 6px 18px; }
@@ -159,6 +176,91 @@
         <div class="banks-grid" id="banksGrid"></div>
         <div class="no-results" id="noResults">😔 Банков не найдено.<br>Измените фильтры или свяжитесь с менеджером.</div>
 
+        <!-- Регистрация бизнеса -->
+        <div class="extra-section">
+            <div class="extra-card">
+                <h2>Оформите заявку на регистрацию бизнеса в течение 15 минут</h2>
+                <div class="subtitle">
+                    📌 Получение ИНН, СНИЛС, выпуск ЭЦП — удаленно. Предоставление временной регистрации, открытие расчетных счетов — удаленно.
+                </div>
+                <p>
+                    Помогаем с регистрацией любых форм бизнеса, предоставление юридического адреса, подготавливаем документы, юридическое и бухгалтерское сопровождение.
+                </p>
+                <a href="https://t.me/kirilloff_igor" class="btn-search" style="max-width: 400px; margin: 0 auto; display: inline-block; text-align: center; text-decoration: none;">📋 Оставить заявку на регистрацию</a>
+                
+                <div class="info-list">
+                    <p><strong>Для регистрации Вам потребуется:</strong></p>
+                    <ul>
+                        <li>Гарантийное письмо (юридический адрес для юрлиц)</li>
+                        <li>Фотографии паспорта (основной разворот и страницы регистрации)</li>
+                        <li>СНИЛС</li>
+                        <li>ИНН</li>
+                        <li>Телефон и адрес электронной почты</li>
+                        <li>Список кодов ОКВЭД (основной и дополнительные)</li>
+                        <li>Система налогообложения</li>
+                        <li>Размер уставного капитала (для ООО)</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;"><strong>Сервис самостоятельной регистрации:</strong></p>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">Зарегистрируйте бизнес бесплатно, за 3 дня. Без поездок в налоговую и очередей. Без оплаты госпошлин. Выберите банк-партнёра:</p>
+                    <div class="extra-grid">
+                        <div class="extra-item">
+                            <div class="item-name">ВТБ</div>
+                            <a href="https://banks-market.com/offer/319/1229" class="item-btn" target="_blank">ИП</a>
+                            <a href="https://banks-market.com/offer/318/1229" class="item-btn" target="_blank">ООО</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Альфа-Банк</div>
+                            <a href="https://banks-market.com/offer/532/1229" class="item-btn" target="_blank">ИП</a>
+                            <a href="https://banks-market.com/offer/531/1229" class="item-btn" target="_blank">ООО</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Уралсиб</div>
+                            <a href="https://banks-market.com/offer/309/1229" class="item-btn" target="_blank">ИП</a>
+                            <a href="https://banks-market.com/offer/310/1229" class="item-btn" target="_blank">ООО</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Т-Банк</div>
+                            <a href="https://www.tbank.ru/business/registration-ip/?utm_medium=ptr.act&utm_campaign=sme.partners&partnerId=5-3HUOSFNGB&agentId=6-100MO91CO&agentSsoId=b01f5637-93b6-46c2-972a-5332ba31c2fc&utm_source=partner_rko_a_sme" class="item-btn" target="_blank">ИП</a>
+                            <a href="https://www.tbank.ru/business/registration-ooo/form?utm_medium=ptr.act&utm_campaign=sme.partners&partnerId=5-3HUOSFNGB&agentId=6-100MO91CO&agentSsoId=b01f5637-93b6-46c2-972a-5332ba31c2fc&utm_source=partner_rko_a_sme" class="item-btn" target="_blank">ООО</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Сбербанк</div>
+                            <a href="https://www.sberbank.com/ru/s_m_business/referral/reg?utm_source=0QTQD9A2C0WPS" class="item-btn" target="_blank">Регистрация</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Точка</div>
+                            <a href="https://t.me/kirilloff_igor" class="item-btn full" target="_blank">Написать в Telegram</a>
+                        </div>
+                        <div class="extra-item">
+                            <div class="item-name">Нужна помощь?</div>
+                            <a href="https://t.me/kirilloff_igor" class="item-btn full" target="_blank">Написать менеджеру</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Бухгалтерское обслуживание и Юридические услуги -->
+        <div class="extra-section">
+            <div class="extra-card">
+                <h2>Бухгалтерское обслуживание и Юридические услуги</h2>
+                <p style="margin-bottom: 30px;">Профессиональная поддержка вашего бизнеса</p>
+                <div class="extra-grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+                    <div class="extra-item">
+                        <div class="item-name">Бухгалтерское обслуживание</div>
+                        <a href="https://t.me/kirilloff_igor" class="item-btn full" target="_blank">Перейти к выбору</a>
+                    </div>
+                    <div class="extra-item">
+                        <div class="item-name">Юридические услуги</div>
+                        <a href="https://t.me/kirilloff_igor" class="item-btn full" target="_blank">Перейти к выбору</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="footer">
             <div class="footer-left"><strong>ИП ВАСИЛЕВСКАЯ АННА СЕРГЕЕВНА</strong><br>ИНН: 771562419934</div>
             <div class="footer-right">
@@ -188,18 +290,18 @@
         let currentInn = '';
         let currentCompany = '';
 
-        function sendAnalytics(bankName, inn, action, link) {
+        function sendAnalytics(bankName, action, link) {
+            const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
             const data = {
                 date: new Date().toLocaleDateString('ru-RU'),
                 time: new Date().toLocaleTimeString('ru-RU'),
                 bank: bankName,
-                inn: inn || '—',
+                inn: inn,
                 company: currentCompany || '—',
                 action: action,
                 link: link,
                 status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
             };
-
             const params = new URLSearchParams(data).toString();
             const img = new Image();
             img.src = APPS_SCRIPT_URL + "?" + params;
@@ -386,8 +488,7 @@
         let banksData = [...allBanksData];
         const DADATA_TOKEN = "88b2ea44839acf5933d1d286b4540d8e218c5f58";
         let currentType = "IP";
-currentInn = '';
-currentCompany = '';
+
         document.getElementById('toggleType').addEventListener('click', function(e) {
             if (e.target.classList.contains('toggle-btn')) {
                 document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -479,7 +580,6 @@ currentCompany = '';
             const noResults = document.getElementById('noResults');
             if (banksData.length === 0) { grid.innerHTML = ''; noResults.style.display = 'block'; return; }
             noResults.style.display = 'none';
-            const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
 
             grid.innerHTML = banksData.map((bank, i) => `
                 <div class="bank-card" id="bank${i}">
@@ -513,8 +613,8 @@ currentCompany = '';
                             </div>
                         `).join('')}
                         ${bank.link === "MANAGER"
-                            ? `<a href="https://t.me/Kirilloff_Igor" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor')">📝 Оставить заявку</a>`
-                            : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`
+                            ? `<a href="https://t.me/Kirilloff_Igor" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor')">📝 Оставить заявку</a>`
+                            : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`
                         }
                     </div>
                 </div>
