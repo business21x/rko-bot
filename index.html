@@ -447,24 +447,29 @@
         }
 
         /* Модальные окна */
-        .modal {
+        .modal-overlay {
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
-            display: flex; align-items: center; justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        .modal-content {
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
             background: var(--card-bg);
-            padding: 30px;
+            border: 1px solid var(--border);
             border-radius: 20px;
+            padding: 30px;
             max-width: 600px;
             width: 90%;
-            border: 1px solid var(--border);
             position: relative;
         }
-        .close {
+        .modal .close {
             position: absolute;
             top: 15px; right: 20px;
             font-size: 28px;
@@ -472,15 +477,16 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .close:hover { color: var(--accent); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
+        .modal .close:hover { color: var(--accent); }
+        .modal h2 { margin-bottom: 16px; color: var(--accent); }
+        .modal .form-group { margin-bottom: 15px; }
+        .modal .form-group label {
             display: block;
             font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
-        .form-group input, .form-group select {
+        .modal .form-group input {
             width: 100%;
             padding: 12px 14px;
             background: var(--bg);
@@ -491,13 +497,29 @@
             font-family: inherit;
             transition: 0.2s;
         }
-        .form-group input:focus, .form-group select:focus {
+        .modal .form-group input:focus {
             outline: none;
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(246, 195, 67, 0.1);
         }
-        @media (max-width: 480px) {
-            .modal-content { padding: 20px; }
+        .modal .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .modal .btn-submit:hover {
+            background: var(--accent-hover);
+        }
+        .modal .status {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
         }
 
         /* Регистрация бизнеса */
@@ -804,9 +826,77 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalPartners"><div class="modal"><button class="close" onclick="closeModal('partners')">×</button><h2>Партнёрская программа</h2><p>Присоединяйтесь к партнёрской программе ИП Василевская Анна Сергеевна. Зарабатывайте на привлечении клиентов на открытие расчётных счетов.</p><ol><li>Свяжитесь с нами через Telegram.</li><li>Получите персональные партнёрские ссылки.</li><li>Размещайте ссылки на своих ресурсах.</li><li>Получайте вознаграждение за каждый открытый счёт.</li></ol><p>Для подключения: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
-    <div class="modal-overlay" id="modalPrivacy"><div class="modal"><button class="close" onclick="closeModal('privacy')">×</button><h2>Политика конфиденциальности</h2><p>ИП Василевская Анна Сергеевна (ИНН 771562419934). Собираем: ИНН, ФИО, телефон, email, компанию, город. Данные используются для подбора счета и передаются только банкам-партнёрам. Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
-    <div class="modal-overlay" id="modalAgreement"><div class="modal"><button class="close" onclick="closeModal('agreement')">×</button><h2>Пользовательское соглашение</h2><p>Сервис предоставляется бесплатно. Решение об открытии счета принимает банк. ИП Василевская Анна Сергеевна (ИНН 771562419934). Контакты: <a href="https://t.me/Kirilloff_Igor" style="color:#f6c343;">@Kirilloff_Igor</a></p></div></div>
+    <!-- Модальное окно для ВТБ -->
+    <div class="modal-overlay" id="vtbModal">
+        <div class="modal">
+            <span class="close" onclick="document.getElementById('vtbModal').classList.remove('active')">×</span>
+            <h2>📋 Заявка на ВТБ</h2>
+            <form id="vtbForm">
+                <div class="form-group">
+                    <label>ИНН</label>
+                    <input type="text" id="vtbInn" placeholder="10 или 12 цифр" required>
+                </div>
+                <div class="form-group">
+                    <label>Наименование компании</label>
+                    <input type="text" id="vtbCompany" placeholder="ООО «Ромашка»" required>
+                </div>
+                <div class="form-group">
+                    <label>ФИО</label>
+                    <input type="text" id="vtbFio" placeholder="Иванов Иван Иванович" required>
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="text" id="vtbPhone" placeholder="+7 (999) 999-99-99" required>
+                </div>
+                <div class="form-group">
+                    <label>Город</label>
+                    <input type="text" id="vtbCity" placeholder="Москва" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="vtbEmail" placeholder="example@mail.ru" required>
+                </div>
+                <button type="submit" class="btn-submit">🚀 Отправить заявку</button>
+                <div class="status" id="vtbStatus"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно для Точки -->
+    <div class="modal-overlay" id="tochkaModal">
+        <div class="modal">
+            <span class="close" onclick="document.getElementById('tochkaModal').classList.remove('active')">×</span>
+            <h2>📋 Заявка на Точку</h2>
+            <form id="tochkaForm">
+                <div class="form-group">
+                    <label>ИНН</label>
+                    <input type="text" id="tochkaInn" placeholder="10 или 12 цифр" required>
+                </div>
+                <div class="form-group">
+                    <label>Наименование компании</label>
+                    <input type="text" id="tochkaCompany" placeholder="ООО «Ромашка»" required>
+                </div>
+                <div class="form-group">
+                    <label>ФИО</label>
+                    <input type="text" id="tochkaFio" placeholder="Иванов Иван Иванович" required>
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="text" id="tochkaPhone" placeholder="+7 (999) 999-99-99" required>
+                </div>
+                <div class="form-group">
+                    <label>Город</label>
+                    <input type="text" id="tochkaCity" placeholder="Москва" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="tochkaEmail" placeholder="example@mail.ru" required>
+                </div>
+                <button type="submit" class="btn-submit">🚀 Отправить заявку</button>
+                <div class="status" id="tochkaStatus"></div>
+            </form>
+        </div>
+    </div>
 
     <script>
         window.WAMM_W1_WidgetConfig = [
@@ -1656,7 +1746,134 @@
             filterBanks();
         }
 
-        // Первичная загрузка
+        // ============ МОДАЛЬНЫЕ ОКНА ДЛЯ ВТБ И ТОЧКИ ============
+        function openVtbModal() {
+            const modal = document.getElementById('vtbModal');
+            modal.classList.add('active');
+            document.getElementById('vtbStatus').textContent = '';
+        }
+
+        function openTochkaModal() {
+            const modal = document.getElementById('tochkaModal');
+            modal.classList.add('active');
+            document.getElementById('tochkaStatus').textContent = '';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Закрытие по клику на фон
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Отправка данных из модалки ВТБ
+        document.getElementById('vtbForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('vtbStatus');
+            status.textContent = '⏳ Отправка...';
+            
+            const inn = document.getElementById('vtbInn').value.trim();
+            const company = document.getElementById('vtbCompany').value.trim();
+            const fio = document.getElementById('vtbFio').value.trim();
+            const phone = document.getElementById('vtbPhone').value.trim();
+            const city = document.getElementById('vtbCity').value.trim();
+            const email = document.getElementById('vtbEmail').value.trim();
+
+            if (!inn || !company || !fio || !phone || !city || !email) {
+                status.textContent = '❌ Заполните все поля!';
+                return;
+            }
+
+            // Отправка в таблицу
+            sendAnalytics('ВТБ', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor');
+            
+            // Отправка в бота
+            await sendToBot('/site_request_vtb', 'ВТБ', inn, company, fio, phone, city, email);
+
+            status.textContent = '✅ Заявка отправлена!';
+            setTimeout(() => closeModal('vtbModal'), 2000);
+        });
+
+        // Отправка данных из модалки Точки
+        document.getElementById('tochkaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const status = document.getElementById('tochkaStatus');
+            status.textContent = '⏳ Отправка...';
+            
+            const inn = document.getElementById('tochkaInn').value.trim();
+            const company = document.getElementById('tochkaCompany').value.trim();
+            const fio = document.getElementById('tochkaFio').value.trim();
+            const phone = document.getElementById('tochkaPhone').value.trim();
+            const city = document.getElementById('tochkaCity').value.trim();
+            const email = document.getElementById('tochkaEmail').value.trim();
+
+            if (!inn || !company || !fio || !phone || !city || !email) {
+                status.textContent = '❌ Заполните все поля!';
+                return;
+            }
+
+            // Отправка в таблицу
+            sendAnalytics('Точка', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor');
+            
+            // Отправка в бота
+            await sendToBot('/site_request_tochka', 'Точка', inn, company, fio, phone, city, email);
+
+            status.textContent = '✅ Заявка отправлена!';
+            setTimeout(() => closeModal('tochkaModal'), 2000);
+        });
+
+        // ============ ОТПРАВКА В ТАБЛИЦУ И БОТА ============
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKFWYI4X9oAVZDg5aGzk7uQPk8ExxA2XpIx3wVuF-QaFZ4N9h_jy9PHde5W7mWlzMehA/exec";
+        const TELEGRAM_TOKEN = "8669530100:AAErkDlHyLIHdK9BKPW6soH8krvE5UHE_jQ";
+        const TELEGRAM_CHAT_ID = "756753408";
+
+        function sendAnalytics(bankName, action, link) {
+            const inn = document.getElementById('innInput').value.trim() || '—';
+            const data = {
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU'),
+                bank: bankName,
+                inn: inn,
+                company: '—',
+                action: action,
+                link: link,
+                status: action === 'Переход по ссылке' ? 'Клик' : 'Ожидает'
+            };
+            const params = new URLSearchParams(data).toString();
+            const img = new Image();
+            img.src = APPS_SCRIPT_URL + "?" + params;
+        }
+
+        async function sendToBot(command, bank, inn, company, fio, phone, city, email) {
+            const message = `${command}|${inn}|${company}|${fio}|${phone}|${city}|${email}`;
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                if (response.ok) {
+                    console.log(`✅ Команда ${command} отправлена в бота`);
+                } else {
+                    console.error('Ошибка отправки в Telegram бота');
+                }
+            } catch (e) {
+                console.error('Ошибка соединения с Telegram:', e);
+            }
+        }
+
+        // ============ ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ============
+        // Сразу показываем банки при открытии страницы
         filterBanks();
     </script>
 </body>
