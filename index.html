@@ -188,14 +188,12 @@
         let currentInn = '';
         let currentCompany = '';
 
-        // sendAnalytics теперь берет ИНН напрямую из currentInn или поля
-        function sendAnalytics(bankName, action, link) {
-            const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
+        function sendAnalytics(bankName, inn, action, link) {
             const data = {
                 date: new Date().toLocaleDateString('ru-RU'),
                 time: new Date().toLocaleTimeString('ru-RU'),
                 bank: bankName,
-                inn: inn,
+                inn: inn || '—',
                 company: currentCompany || '—',
                 action: action,
                 link: link,
@@ -388,7 +386,8 @@
         let banksData = [...allBanksData];
         const DADATA_TOKEN = "88b2ea44839acf5933d1d286b4540d8e218c5f58";
         let currentType = "IP";
-
+currentInn = '';
+currentCompany = '';
         document.getElementById('toggleType').addEventListener('click', function(e) {
             if (e.target.classList.contains('toggle-btn')) {
                 document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -480,6 +479,7 @@
             const noResults = document.getElementById('noResults');
             if (banksData.length === 0) { grid.innerHTML = ''; noResults.style.display = 'block'; return; }
             noResults.style.display = 'none';
+            const inn = currentInn || document.getElementById('innInput').value.trim() || '—';
 
             grid.innerHTML = banksData.map((bank, i) => `
                 <div class="bank-card" id="bank${i}">
@@ -513,8 +513,8 @@
                             </div>
                         `).join('')}
                         ${bank.link === "MANAGER"
-                            ? `<a href="https://t.me/Kirilloff_Igor" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor')">📝 Оставить заявку</a>`
-                            : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`
+                            ? `<a href="https://t.me/Kirilloff_Igor" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Заявка менеджеру', 'https://t.me/Kirilloff_Igor')">📝 Оставить заявку</a>`
+                            : `<a href="${bank.link}" class="btn-open" target="_blank" onclick="sendAnalytics('${bank.name}', '${inn}', 'Переход по ссылке', '${bank.link}')">🚀 Открыть счёт</a>`
                         }
                     </div>
                 </div>
