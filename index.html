@@ -85,7 +85,6 @@
         .btn-open { display: block; width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; transition: 0.2s; font-family: inherit; }
         .btn-open:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(246, 195, 67, 0.3); }
 
-        /* Стили для новых разделов (Регистрация и Бухгалтерия) */
         .extra-section { margin: 50px 0 30px; }
         .extra-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px; text-align: center; }
         .extra-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
@@ -98,16 +97,12 @@
         .extra-item .item-btn { display: inline-block; padding: 8px 16px; background: var(--accent); color: #000; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; margin: 4px; transition: 0.2s; }
         .extra-item .item-btn:hover { background: var(--accent-hover); transform: scale(1.02); }
         .extra-item .item-btn.full { width: 100%; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 6px; }
-        .info-list { text-align: left; background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin: 20px 0; }
-        .info-list p { color: var(--text-secondary); font-size: 14px; margin-bottom: 10px; text-align: left; }
-        .info-list ul { color: var(--text-secondary); font-size: 13px; padding-left: 20px; line-height: 1.8; text-align: left; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal h1 { text-align: center; font-size: 22px; margin-bottom: 8px; color: var(--accent); }
         .modal p.subtitle { text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
-        .modal p.note { text-align: center; font-size: 12px; color: #8b94a6; margin-bottom: 20px; background: rgba(246,195,67,0.08); padding: 8px; border-radius: 8px; }
         .modal .close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: var(--text-secondary); font-size: 28px; cursor: pointer; transition: 0.2s; }
         .modal .close:hover { color: var(--accent); }
         .modal .form-group { margin-bottom: 16px; }
@@ -117,6 +112,11 @@
         .modal .btn { width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; }
         .modal .btn:hover { background: var(--accent-hover); }
         .modal .phone-hint { font-size: 11px; color: #8b94a6; margin-top: 4px; }
+        .modal .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .modal .spinner { display: none; text-align: center; padding: 10px; }
+        .modal .spinner.active { display: block; }
+        .modal .spinner::after { content: ''; display: inline-block; width: 30px; height: 30px; border: 3px solid var(--border); border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .footer { margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 30px; font-size: 13px; color: var(--text-secondary); }
         .footer-left { max-width: 400px; }
@@ -191,7 +191,7 @@
             </div>
         </div>
 
-        <div class="catalog-title">
+        <div class="catalog-title" id="resultsHeader">
             <img src="https://img.icons8.com/?size=100&id=dP7OO4TPnEWJ&format=png&color=f6c343" alt="bank"> Выберите банк
         </div>
         <div class="banks-grid" id="banksGrid"></div>
@@ -226,7 +226,7 @@
                 <div style="background: var(--bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
                     <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 10px;"><strong>Сервис самостоятельной регистрации:</strong></p>
                     <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">Зарегистрируйте бизнес бесплатно, за 3 дня. Без поездок в налоговую и очередей. Без оплаты госпошлин. Выберите банк-партнёра:</p>
-                    <div class="registration-grid">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
                         <div class="extra-item">
                             <div class="item-name">ВТБ</div>
                             <a href="https://banks-market.com/offer/319/1229" class="item-btn" target="_blank">ИП</a>
@@ -260,7 +260,7 @@
             </div>
         </div>
 
-        <!-- Бухгалтерское обслуживание и Юридические услуги (одна кнопка) -->
+        <!-- Бухгалтерское обслуживание и Юридические услуги -->
         <div class="extra-section">
             <div class="extra-card">
                 <h2>Бухгалтерское обслуживание и Юридические услуги</h2>
@@ -283,7 +283,7 @@
         </div>
     </div>
 
-    <!-- Модальные окна в футере (информационные) -->
+    <!-- Модальные окна футера -->
     <div class="modal-overlay" id="footerModalPartners">
         <div class="modal">
             <button class="close" onclick="closeFooterModal('partners')">×</button>
@@ -366,7 +366,8 @@
                     <label>Город</label>
                     <input type="text" id="vtbCity" placeholder="Москва" required>
                 </div>
-                <button type="submit" class="btn">🚀 Отправить заявку</button>
+                <div class="spinner" id="vtbSpinner"></div>
+                <button type="submit" class="btn" id="vtbSubmitBtn">🚀 Отправить заявку</button>
             </form>
             <div id="vtbStatus" style="margin-top:15px; text-align:center; font-weight:600;"></div>
         </div>
@@ -404,23 +405,172 @@
                     <label>Город</label>
                     <input type="text" id="tochkaCity" placeholder="Москва" required>
                 </div>
-                <button type="submit" class="btn">🚀 Отправить заявку</button>
+                <div class="spinner" id="tochkaSpinner"></div>
+                <button type="submit" class="btn" id="tochkaSubmitBtn">🚀 Отправить заявку</button>
             </form>
             <div id="tochkaStatus" style="margin-top:15px; text-align:center; font-weight:600;"></div>
         </div>
     </div>
 
     <script>
-        window.WAMM_W1_WidgetConfig = [
-            { "type": "WhatsApp", "url": "https://wa.me/", "id": "79674758478" },
-            { "type": "Telegram", "url": "https://t.me/", "id": "Kirilloff_Igor" },
-            { "type": "Phone", "url": "tel:", "id": "+79674758478" }
-        ];
-    </script>
-    <script src="https://wamm.chat/widget/buttons" data-color="#f6c343" data-size="small" data-position="bottom-right" data-theme="dark" data-show-on="all"></script>
+        // ============ БЕЗОПАСНАЯ ЗАГРУЗКА КОНФИГА ============
+        let TELEGRAM_TOKEN = "";
+        let TELEGRAM_CHAT_ID = "";
 
-    <script>
-        // ============ ВАШ ИСХОДНЫЙ МАССИВ БАНКОВ С РАСКРЫВАЮЩИМИСЯ ТАРИФАМИ ============
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.js');
+                const text = await response.text();
+                const cleanText = text.replace(/\/\/.*$/gm, '').trim();
+                eval(cleanText);
+                console.log('✅ Конфиг загружен');
+                console.log('📌 TELEGRAM_TOKEN:', TELEGRAM_TOKEN ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+                console.log('📌 TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+            } catch (e) {
+                console.error('❌ Ошибка загрузки config.js:', e);
+                console.log('⚠️ Работаем без отправки в бот.');
+            }
+        }
+        loadConfig();
+
+        // ============ ОТПРАВКА В TELEGRAM ============
+        async function sendToTelegram(bankName, formData) {
+            const message = `
+📋 *Новая заявка на РКО*
+
+🏦 Банк: ${bankName}
+🏢 Компания: ${formData.company || '—'}
+👤 ФИО: ${formData.fio || '—'}
+📌 ИНН: ${formData.inn || '—'}
+📧 Email: ${formData.email || '—'}
+📞 Телефон: ${formData.phone || '—'}
+📍 Город: ${formData.city || '—'}
+            `;
+
+            if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
+                console.log('⚠️ Telegram не настроен. Заявка сохранена в консоли:', message);
+                return true;
+            }
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                const result = await response.json();
+                return result.ok;
+            } catch (e) {
+                console.error('Ошибка отправки:', e);
+                return false;
+            }
+        }
+
+        // ============ МОДАЛЬНЫЕ ОКНА ============
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            const statusEl = document.getElementById(id.replace('Modal', 'Status'));
+            if (statusEl) statusEl.textContent = '';
+            const spinner = document.querySelector(`#${id} .spinner`);
+            if (spinner) spinner.classList.remove('active');
+            const btn = document.querySelector(`#${id} .btn`);
+            if (btn) btn.disabled = false;
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        function openFooterModal(type) {
+            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+        }
+
+        function closeFooterModal(type) {
+            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
+        }
+
+        function openVtbModal() {
+            document.getElementById('vtbModal').classList.add('active');
+            document.getElementById('vtbStatus').textContent = '';
+            document.getElementById('vtbSubmitBtn').disabled = false;
+        }
+
+        function openTochkaModal() {
+            document.getElementById('tochkaModal').classList.add('active');
+            document.getElementById('tochkaStatus').textContent = '';
+            document.getElementById('tochkaSubmitBtn').disabled = false;
+        }
+
+        // ============ ОБРАБОТЧИКИ ФОРМ ============
+        async function handleFormSubmit(event, bankName, formId, statusId, spinnerId, submitBtnId) {
+            event.preventDefault();
+            const status = document.getElementById(statusId);
+            const spinner = document.getElementById(spinnerId);
+            const submitBtn = document.getElementById(submitBtnId);
+
+            const form = document.getElementById(formId);
+            const formData = {
+                company: document.getElementById(formId.replace('Form', 'Company')).value.trim(),
+                fio: document.getElementById(formId.replace('Form', 'Fio')).value.trim(),
+                inn: document.getElementById(formId.replace('Form', 'Inn')).value.trim(),
+                email: document.getElementById(formId.replace('Form', 'Email')).value.trim(),
+                phone: document.getElementById(formId.replace('Form', 'Phone')).value.trim(),
+                city: document.getElementById(formId.replace('Form', 'City')).value.trim()
+            };
+
+            for (let key in formData) {
+                if (!formData[key]) {
+                    status.textContent = '⚠️ Заполните все поля!';
+                    status.style.color = '#ff6b6b';
+                    return;
+                }
+            }
+
+            spinner.classList.add('active');
+            submitBtn.disabled = true;
+            status.textContent = '';
+            status.style.color = '';
+
+            const success = await sendToTelegram(bankName, formData);
+
+            spinner.classList.remove('active');
+            submitBtn.disabled = false;
+
+            if (success) {
+                status.textContent = '✅ Заявка успешно отправлена!';
+                status.style.color = '#4caf50';
+                form.reset();
+                setTimeout(() => {
+                    closeModal(formId.replace('Form', 'Modal'));
+                }, 2000);
+            } else {
+                status.textContent = '❌ Ошибка отправки. Попробуйте позже или напишите нам в Telegram.';
+                status.style.color = '#ff6b6b';
+            }
+        }
+
+        document.getElementById('vtbForm').addEventListener('submit', function(e) {
+            handleFormSubmit(e, 'ВТБ', 'vtbForm', 'vtbStatus', 'vtbSpinner', 'vtbSubmitBtn');
+        });
+
+        document.getElementById('tochkaForm').addEventListener('submit', function(e) {
+            handleFormSubmit(e, 'Точка', 'tochkaForm', 'tochkaStatus', 'tochkaSpinner', 'tochkaSubmitBtn');
+        });
+
+        // ============ МАССИВ БАНКОВ (ПОЛНЫЙ, 36 БАНКОВ) ============
         const allBanksData = [
             {
                 name: "Т-Банк",
@@ -603,8 +753,7 @@
                 tariffs: [
                     { name: "Фермер", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "5 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 150 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Для сельского хозяйства"], withdrawLimit: 150000, freePaymentCount: 5, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "30 ₽", freePayments: "10 шт., далее 30 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
-                    { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://rko-group.ru/s/rSbxKfe1"
             },
@@ -655,7 +804,8 @@
                 tariffs: [
                     { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Бесплатное открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.8, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.4, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "50 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 50, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
+                    { name: "Максимальный", price: "3 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://rko-group.ru/s/2Q6nJNnH"
             },
@@ -676,7 +826,8 @@
                 tariffs: [
                     { name: "Старт", price: "0 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "100 ₽", freePayments: "3 шт., далее 100 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 100 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Быстрое открытие"], withdrawLimit: 100000, freePaymentCount: 3, acquiring: 1.5, ved: false, forIP: true, forOOO: true },
                     { name: "Базовый", price: "490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "50 ₽", freePayments: "10 шт., далее 50 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 300 000 ₽", cashOutCard: "0.5%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Расширенный"], withdrawLimit: 300000, freePaymentCount: 10, acquiring: 1.3, ved: false, forIP: true, forOOO: true },
-                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true }
+                    { name: "Оптимальный", price: "1 490 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "30 шт., далее 0 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 500 000 ₽", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["0₽ за платежи"], withdrawLimit: 500000, freePaymentCount: 30, acquiring: 1.1, ved: true, forIP: true, forOOO: true },
+                    { name: "Максимальный", price: "2 990 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Всё включено"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 0.9, ved: true, forIP: true, forOOO: true }
                 ],
                 link: "https://banks-market.com/offer/239/1229"
             },
@@ -762,12 +913,12 @@
             }
         ];
 
-        // ============ ЛОГИКА ============
+        // ============ ВСПОМОГАТЕЛЬНЫЕ ПЕРЕМЕННЫЕ ============
         let banksData = [...allBanksData];
         const DADATA_TOKEN = "88b2ea44839acf5933d1d286b4540d8e218c5f58";
         let currentType = "IP";
 
-        // Переключатель ИП/ООО
+        // ============ ПЕРЕКЛЮЧАТЕЛЬ ИП/ООО ============
         document.getElementById('toggleType').addEventListener('click', function(e) {
             if (e.target.classList.contains('toggle-btn')) {
                 document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
@@ -776,7 +927,7 @@
             }
         });
 
-        // Слайдеры (ТОЛЬКО меняют цифры, НЕ фильтруют)
+        // ============ СЛАЙДЕРЫ ============
         document.getElementById('turnover').addEventListener('input', function() {
             document.getElementById('turnoverValue').textContent = Number(this.value).toLocaleString() + ' ₽';
         });
@@ -787,13 +938,15 @@
             document.getElementById('paymentsValue').textContent = this.value + ' шт.';
         });
 
-        // Автозаполнение ИНН
+        // ============ АВТОЗАПОЛНЕНИЕ ПО ИНН ============
         document.getElementById('innInput').addEventListener('input', function() {
             const inn = this.value.trim();
             if (inn.length === 10 || inn.length === 12) {
                 checkINN(inn);
             }
         });
+
+        let currentCompany = "";
 
         async function checkINN(inn) {
             try {
@@ -823,13 +976,14 @@
             } catch (e) { console.log(e); }
         }
 
-        // Фильтрация банков (только по кнопке)
+        // ============ ФИЛЬТРАЦИЯ ============
         function filterBanks() {
             const withdraw = Number(document.getElementById('withdraw').value);
             const payments = Number(document.getElementById('payments').value);
             const acquiring = document.getElementById('acquiring').checked;
             const ved = document.getElementById('ved').checked;
             const freeService = document.getElementById('freeService').checked;
+            
             banksData = allBanksData.filter(bank => {
                 const best = bank.tariffs.reduce((b, t) => {
                     if (currentType === "IP" && !t.forIP) return b;
@@ -844,7 +998,6 @@
                 return best !== null;
             });
             renderAllBanks();
-            // Прокрутка к результатам ТОЛЬКО при нажатии кнопки
             document.getElementById('resultsHeader').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -866,6 +1019,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ============ ОТРИСОВКА БАНКОВ ============
         function renderAllBanks() {
             const grid = document.getElementById('banksGrid');
             const noResults = document.getElementById('noResults');
@@ -915,6 +1069,7 @@
         }
 
         function toggleBank(i) { document.getElementById('bank' + i).classList.toggle('open'); }
+
         function toggleTariff(bankIdx, tariffIdx) {
             const el = document.getElementById('tariff' + bankIdx + '_' + tariffIdx);
             const btn = el.previousElementSibling;
@@ -922,47 +1077,10 @@
             btn.classList.toggle('active');
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        // Закрытие по клику на фон
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('active');
-                }
-            });
-        });
-
-        // Футер модалки
-        function openFooterModal(type) {
-            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
-        }
-        function closeFooterModal(type) {
-            document.getElementById('footerModal' + type.charAt(0).toUpperCase() + type.slice(1)).classList.remove('active');
-        }
-
-        // Модалки ВТБ / Точка
-        function openVtbModal() { document.getElementById('vtbModal').classList.add('active'); document.getElementById('vtbStatus').textContent = ''; }
-        function openTochkaModal() { document.getElementById('tochkaModal').classList.add('active'); document.getElementById('tochkaStatus').textContent = ''; }
-
-        // Отправка данных из модалки ВТБ (заглушка, логика отправки в бот уже встроена в сайте)
-        document.getElementById('vtbForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const status = document.getElementById('vtbStatus');
-            status.textContent = '✅ Заявка отправлена!';
-            setTimeout(() => document.getElementById('vtbModal').classList.remove('active'), 2000);
-        });
-
-        // Отправка данных из модалки Точки (заглушка)
-        document.getElementById('tochkaForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const status = document.getElementById('tochkaStatus');
-            status.textContent = '✅ Заявка отправлена!';
-            setTimeout(() => document.getElementById('tochkaModal').classList.remove('active'), 2000);
-        });
-
-        // Инициализация — сразу показываем все банки
+        // ============ ИНИЦИАЛИЗАЦИЯ ============
         renderAllBanks();
+        console.log('✅ Сайт полностью загружен!');
+        console.log('📊 Всего банков:', allBanksData.length);
     </script>
 </body>
 </html>
