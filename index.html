@@ -441,9 +441,52 @@ async function loadConfig() {
 }
 loadConfig();
 
-        // ============ ОТПРАВКА В TELEGRAM ============
-        async function sendToTelegram(bankName, formData) {
-            const message = `
+        // ============ ОТПРАВКА В TELEGRAM (КОМАНДЫ ДЛЯ БОТА) ============
+async function sendToTelegram(bankName, formData) {
+    // Формируем команду для бота
+    let command = "";
+    if (bankName === "ВТБ") {
+        command = `/site_request_vtb|${formData.inn}|${formData.company}|${formData.fio}|${formData.phone}|${formData.city}|${formData.email}`;
+    } else if (bankName === "Точка") {
+        command = `/site_request_tochka|${formData.inn}|${formData.company}|${formData.fio}|${formData.phone}|${formData.city}|${formData.email}`;
+    } else {
+        // Для других банков — обычное сообщение
+        return sendSimpleTelegramMessage(bankName, formData);
+    }
+
+    if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
+        console.log('⚠️ Telegram не настроен. Команда сохранена в консоли:', command);
+        return true;
+    }
+
+    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: command,
+                parse_mode: 'Markdown'
+            })
+        });
+        const result = await response.json();
+        if (result.ok) {
+            console.log(`✅ Команда отправлена боту: ${command.substring(0, 50)}...`);
+            return true;
+        } else {
+            console.error('Telegram ошибка:', result);
+            return false;
+        }
+    } catch (e) {
+        console.error('Ошибка отправки:', e);
+        return false;
+    }
+}
+
+// Резервная функция для других банков (если понадобится)
+async function sendSimpleTelegramMessage(bankName, formData) {
+    const message = `
 📋 *Новая заявка на РКО*
 
 🏦 Банк: ${bankName}
@@ -453,31 +496,24 @@ loadConfig();
 📧 Email: ${formData.email || '—'}
 📞 Телефон: ${formData.phone || '—'}
 📍 Город: ${formData.city || '—'}
-            `;
+    `;
 
-            if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
-                console.log('⚠️ Telegram не настроен. Заявка сохранена в консоли:', message);
-                return true;
-            }
-
-            const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'Markdown'
-                    })
-                });
-                const result = await response.json();
-                return result.ok;
-            } catch (e) {
-                console.error('Ошибка отправки:', e);
-                return false;
-            }
-        }
+    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown'
+            })
+        });
+        return response.ok;
+    } catch (e) {
+        return false;
+    }
+}
 
         // ============ МОДАЛЬНЫЕ ОКНА ============
         function openModal(id) {
