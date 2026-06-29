@@ -1,3 +1,1 @@
-const TELEGRAM_TOKEN = "8669530100:AAErkDlHyLIHdK9BKPW6soH8krvE5UHE_jQ";
-const TELEGRAM_CHAT_ID = "756753408";
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKFWYI4X9oAVZDg5aGzk7uQPk8ExxA2XpIx3wVuF-QaFZ4N9h_jy9PHde5W7mWlzMehA/exec";
+const TELEGRAM_TOKEN="8669530100:AAErkDlHyLIHdK9BKPW6soH8krvE5UHE_jQ";const TELEGRAM_CHAT_ID="756753408";const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxKFWYI4X9oAVZDg5aGzk7uQPk8ExxA2XpIx3wVuF-QaFZ4N9h_jy9PHde5W7mWlzMehA/exec";
