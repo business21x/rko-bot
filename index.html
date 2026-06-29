@@ -414,79 +414,81 @@
 
     <script>
         // ============ ЗАГРУЗКА КОНФИГА (JSON) ============
-let TELEGRAM_TOKEN = "";
-let TELEGRAM_CHAT_ID = "";
-let APPS_SCRIPT_URL = "";
+        let TELEGRAM_TOKEN = "";
+        let TELEGRAM_CHAT_ID = "";
+        let APPS_SCRIPT_URL = "";
 
-async function loadConfig() {
-    try {
-        const response = await fetch('config.json');
-        if (!response.ok) {
-            throw new Error('config.json не найден!');
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.json');
+                if (!response.ok) {
+                    throw new Error('config.json не найден!');
+                }
+                const config = await response.json();
+                TELEGRAM_TOKEN = config.TELEGRAM_TOKEN || "";
+                TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID || "";
+                APPS_SCRIPT_URL = config.APPS_SCRIPT_URL || "";
+                console.log('✅ Конфиг загружен (JSON)');
+                console.log('📌 TELEGRAM_TOKEN:', TELEGRAM_TOKEN ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+                console.log('📌 TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+                if (APPS_SCRIPT_URL) {
+                    console.log('📌 APPS_SCRIPT_URL: Загружен');
+                }
+            } catch (e) {
+                console.error('❌ Ошибка загрузки config.json:', e.message);
+                console.log('⚠️ Работаем без отправки в бот.');
+            }
         }
-        const config = await response.json();
-        TELEGRAM_TOKEN = config.TELEGRAM_TOKEN || "";
-        TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID || "";
-        APPS_SCRIPT_URL = config.APPS_SCRIPT_URL || "";
-        console.log('✅ Конфиг загружен (JSON)');
-        console.log('📌 TELEGRAM_TOKEN:', TELEGRAM_TOKEN ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
-        console.log('📌 TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
-        if (APPS_SCRIPT_URL) {
-            console.log('📌 APPS_SCRIPT_URL: Загружен');
-        }
-    } catch (e) {
-        console.error('❌ Ошибка загрузки config.json:', e.message);
-        console.log('⚠️ Работаем без отправки в бот.');
-    }
-}
-loadConfig();
+        loadConfig();
 
         // ============ ОТПРАВКА В TELEGRAM (КОМАНДЫ ДЛЯ БОТА) ============
-async function sendToTelegram(bankName, formData) {
-    // Формируем команду для бота
-    let command = "";
-    if (bankName === "ВТБ") {
-        command = `/site_request_vtb|${formData.inn}|${formData.company}|${formData.fio}|${formData.phone}|${formData.city}|${formData.email}`;
-    } else if (bankName === "Точка") {
-        command = `/site_request_tochka|${formData.inn}|${formData.company}|${formData.fio}|${formData.phone}|${formData.city}|${formData.email}`;
-    } else {
-        // Для других банков — обычное сообщение
-        return sendSimpleTelegramMessage(bankName, formData);
-    }
+        async function sendToTelegram(bankName, formData) {
+            // Очищаем телефон от лишних символов (+ ( ) - пробелы)
+            const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+            
+            // Формируем команду для бота
+            let command = "";
+            if (bankName === "ВТБ") {
+                command = `/site_request_vtb|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
+            } else if (bankName === "Точка") {
+                command = `/site_request_tochka|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
+            } else {
+                return sendSimpleTelegramMessage(bankName, formData);
+            }
 
-    if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
-        console.log('⚠️ Telegram не настроен. Команда сохранена в консоли:', command);
-        return true;
-    }
+            if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
+                console.log('⚠️ Telegram не настроен. Команда сохранена в консоли:', command);
+                return true;
+            }
 
-    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: command,
-                parse_mode: 'Markdown'
-            })
-        });
-        const result = await response.json();
-        if (result.ok) {
-            console.log(`✅ Команда отправлена боту: ${command.substring(0, 50)}...`);
-            return true;
-        } else {
-            console.error('Telegram ошибка:', result);
-            return false;
+            const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: command
+                        // parse_mode: 'Markdown' — УБРАЛИ, ЧТОБЫ TELEGRAM НЕ УДАЛЯЛ _ ИЗ КОМАНДЫ
+                    })
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    console.log(`✅ Команда отправлена боту: ${command.substring(0, 50)}...`);
+                    return true;
+                } else {
+                    console.error('Telegram ошибка:', result);
+                    return false;
+                }
+            } catch (e) {
+                console.error('Ошибка отправки:', e);
+                return false;
+            }
         }
-    } catch (e) {
-        console.error('Ошибка отправки:', e);
-        return false;
-    }
-}
 
-// Резервная функция для других банков (если понадобится)
-async function sendSimpleTelegramMessage(bankName, formData) {
-    const message = `
+        // Резервная функция для других банков (если понадобится)
+        async function sendSimpleTelegramMessage(bankName, formData) {
+            const message = `
 📋 *Новая заявка на РКО*
 
 🏦 Банк: ${bankName}
@@ -496,24 +498,24 @@ async function sendSimpleTelegramMessage(bankName, formData) {
 📧 Email: ${formData.email || '—'}
 📞 Телефон: ${formData.phone || '—'}
 📍 Город: ${formData.city || '—'}
-    `;
+            `;
 
-    const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        });
-        return response.ok;
-    } catch (e) {
-        return false;
-    }
-}
+            const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                return response.ok;
+            } catch (e) {
+                return false;
+            }
+        }
 
         // ============ МОДАЛЬНЫЕ ОКНА ============
         function openModal(id) {
@@ -588,12 +590,48 @@ async function sendSimpleTelegramMessage(bankName, formData) {
             status.textContent = '';
             status.style.color = '';
 
-            const success = await sendToTelegram(bankName, formData);
+            // ==== ОТПРАВКА В TELEGRAM ====
+            const tgSuccess = await sendToTelegram(bankName, formData);
+
+            // ==== ОТПРАВКА В GOOGLE ТАБЛИЦУ (опционально) ====
+            let sheetSuccess = false;
+            if (APPS_SCRIPT_URL) {
+                try {
+                    const now = new Date();
+                    const date = now.toLocaleDateString('ru-RU');
+                    const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    
+                    const sheetData = {
+                        date: date,
+                        time: time,
+                        bank: bankName,
+                        inn: formData.inn,
+                        company: formData.company,
+                        action: 'Заявка на РКО',
+                        link: `https://business21x.github.io/rko-bot/`,
+                        status: 'Новая'
+                    };
+
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(sheetData)
+                    });
+                    sheetSuccess = true;
+                    console.log('📊 Отправка в таблицу выполнена');
+                } catch (e) {
+                    console.error('❌ Ошибка отправки в таблицу:', e);
+                    sheetSuccess = false;
+                }
+            }
 
             spinner.classList.remove('active');
             submitBtn.disabled = false;
 
-            if (success) {
+            if (tgSuccess || sheetSuccess) {
                 status.textContent = '✅ Заявка успешно отправлена!';
                 status.style.color = '#4caf50';
                 form.reset();
@@ -614,7 +652,7 @@ async function sendSimpleTelegramMessage(bankName, formData) {
             handleFormSubmit(e, 'Точка', 'tochkaForm', 'tochkaStatus', 'tochkaSpinner', 'tochkaSubmitBtn');
         });
 
-        // ============ МАССИВ БАНКОВ (ПОЛНЫЙ, 36 БАНКОВ) ============
+        // ============ МАССИВ БАНКОВ ============
         const allBanksData = [
             {
                 name: "Т-Банк",
