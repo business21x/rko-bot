@@ -700,13 +700,13 @@
             },
             {
                 name: "Точка",
-                logo: "https://tochka.com/favicon.ico",
+                logo: "https://azecsuwvwypwnkgobujn.supabase.co/storage/v1/object/public/avatars/company-logos/55280544-7ea5-4b2a-98d9-2df3efd60f69.png",
                 tariffs: [
                     { name: "Начало", price: "950 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "60 ₽", freePayments: "10 шт., далее 60 ₽", incoming: "Бесплатно", cashOutOffice: "Бесплатно до 400 000 ₽", cashOutCard: "1%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["10 бесплатных платежей","Интеграция с 1С"], withdrawLimit: 400000, freePaymentCount: 10, acquiring: 1.7, ved: true, forIP: true, forOOO: true },
                     { name: "Развитие", price: "4 200 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["3 месяца бесплатно новым","Безлимит"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.2, ved: true, forIP: true, forOOO: true },
                     { name: "Корпоративный", price: "7 900 ₽/мес", transferFL: "Бесплатно", insideBank: "Бесплатно", toOtherBanks: "0 ₽", freePayments: "Безлимит", incoming: "Бесплатно", cashOutOffice: "Без ограничений", cashOutCard: "0%", cashInOffice: "Бесплатно", cashInCard: "Бесплатно", features: ["Персональный менеджер","Зарплатный проект"], withdrawLimit: 999999999, freePaymentCount: 999, acquiring: 1.0, ved: true, forIP: true, forOOO: true }
                 ],
-                link: "modal"
+                link: "modal_tochka"
             },
             {
                 name: "Озон Банк",
@@ -1140,11 +1140,11 @@
                             </div>
                         `).join('')}
                         ${bank.link === "modal" 
-                            ? `<button class="btn-open" onclick="openVtbModal()">🚀 Открыть счёт</button>`
-                            : bank.link === "modal_tochka"
-                                ? `<button class="btn-open" onclick="openTochkaModal()">🚀 Открыть счёт</button>`
-                                : `<a href="${bank.link}" class="btn-open" target="_blank">🚀 Открыть счёт</a>`
-                        }
+    ? `<button class="btn-open" onclick="openVtbModal()">🚀 Открыть счёт</button>`
+    : bank.link === "modal_tochka"
+        ? `<button class="btn-open" onclick="openTochkaModal()">🚀 Открыть счёт</button>`
+        : `<a href="${bank.link}" class="btn-open" target="_blank">🚀 Открыть счёт</a>`
+}
                     </div>
                 </div>
             `).join('');
