@@ -448,11 +448,11 @@
             
             // Формируем команду для бота
             let command = "";
-            if (bankName === "ВТБ") {
-                command = `/site_request_vtb@МониторРКОСравни|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
-            } else if (bankName === "Точка") {
-                command = `/site_request_tochka@МониторРКОСравни|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
-            } else {
+           if (bankName === "ВТБ") {
+    command = `/site_request_vtb@monitor_sravni_bot|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
+} else if (bankName === "Точка") {
+    command = `/site_request_tochka@monitor_sravni_bot|${formData.inn}|${formData.company}|${formData.fio}|${cleanPhone}|${formData.city}|${formData.email}`;
+} else {
                 return sendSimpleTelegramMessage(bankName, formData);
             }
 
